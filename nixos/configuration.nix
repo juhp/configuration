@@ -17,8 +17,9 @@
     gpm.enable = true;
     locate.enable = true;
     sshd.enable = true;
+    ttyBackgrounds.enable = false;
     xserver = {
-      enable = true;
+#      enable = true;
       videoDriver = "cirrus";
     };
   };
