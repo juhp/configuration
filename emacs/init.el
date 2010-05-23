@@ -46,7 +46,7 @@
 ;;; personal lisp dir
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/lisp"))
 
-;;; browse-kill-ring
+;;; browse-kill-ring (emacs-goodies)
 (browse-kill-ring-default-keybindings)
 
 ;;; diary
