@@ -9,9 +9,16 @@
       indent-tabs-mode nil
       inhibit-startup-screen t
       kill-whole-line t
+      show-paren-mode t
       show-trailing-whitespace t
+      size-indication-mode t
+      uniquify-buffer-name-style 'forward
       use-dialog-box nil
       visible-bell t)
+
+(setq-default indicate-buffer-boundaries t
+	      indicate-empty-lines t
+	      save-place t)
 
 (load custom-file)
 
@@ -26,6 +33,12 @@
 (global-set-key [C-tab] 'mode-line-other-buffer)
 (global-set-key [M-left] 'backward-sexp)
 (global-set-key [M-right] 'forward-sexp)
+
+;;; scrollbar
+(set-scroll-bar-mode 'right)
+
+;;; toolbar
+(tool-bar-mode)
 
 ;; ja font
 (set-fontset-font t 'japanese-jisx0208 "VL ゴシック")
@@ -85,7 +98,8 @@
       (view-file (pop args))))
 
 ;;; ffap
-(setq ffap-require-prefix t)
+(setq dired-at-point-require-prefix t
+      ffap-require-prefix t)
 (ffap-bindings)
 
 ;;; iswitchb
