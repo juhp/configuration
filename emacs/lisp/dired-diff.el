@@ -50,7 +50,7 @@
 					 (dired-current-directory) t)
 					"] ")
 			      ""))
-		    (default-directory) default t)))
+		    default-directory default t)))
 
 (defun dired-diff-read-switches (switchprompt)
   ;; Read and return a list of switches
