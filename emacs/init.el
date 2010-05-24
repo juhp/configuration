@@ -16,7 +16,7 @@
       use-dialog-box nil
       visible-bell t)
 
-(setq-default indicate-buffer-boundaries t
+(setq-default indicate-buffer-boundaries 'left
 	      indicate-empty-lines t
 	      save-place t)
 
@@ -131,3 +131,5 @@
 (unless (server-running-p)
   (server-start))
 
+;;; uniquify
+(require 'uniquify)
