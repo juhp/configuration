@@ -22,6 +22,7 @@
 
 (load custom-file)
 
+(global-set-key "\C-x\C-b" 'buffer-menu)
 (global-set-key "\C-xw" 'write-region)
 (global-set-key "\C-ce" 'shell)
 (global-set-key "\C-cf" 'find-function-other-window)
@@ -107,6 +108,10 @@
 (require 'iswitchb)
 (iswitchb-default-keybindings)
 (defalias 'read-buffer 'iswitchb-read-buffer)
+
+;;; lookup
+(add-to-list 'load-path "~/.emacs.d/lisp/lookup/lisp")
+(autoload 'lookup "lookup" nil t)
 
 ;;; w3m
 (setq w3m-use-cookies t
