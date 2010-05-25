@@ -47,7 +47,8 @@
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/lisp"))
 
 ;;; browse-kill-ring (emacs-goodies)
-(browse-kill-ring-default-keybindings)
+(if (commandp 'browse-kill-ring-default-keybindings)
+    (browse-kill-ring-default-keybindings))
 
 ;;; diary
 (if (file-readable-p "~/diary")
