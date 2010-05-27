@@ -9,6 +9,8 @@
       indent-tabs-mode nil
       inhibit-startup-screen t
       kill-whole-line t
+      save-place-file "~/.emacs.d/saveplaces.el"
+      save-place-limit 1000
       show-paren-mode t
       show-trailing-whitespace t
       size-indication-mode t
@@ -126,6 +128,12 @@
                               nil))
                (add-to-list 'w3m-uri-replace-alist
                             '("\\`bz:" w3m-search-uri-replace "RH bugzilla bug no"))))
+
+;;; savehist
+(require 'savehist)
+
+;;; saveplace
+(require 'saveplace)
 
 ;; scala
 ;(add-to-list 'load-path "~/usr/scala/misc/scala-tool-support/emacs/")
