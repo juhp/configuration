@@ -8,12 +8,16 @@
       help-window-select t
       indent-tabs-mode nil
       inhibit-startup-screen t
+      ;;? ispell-dictionary "english"
+      kill-do-not-save-duplicates t
+      kill-ring-max 128
       kill-whole-line t
       save-place-file "~/.emacs.d/saveplaces.el"
       save-place-limit 1000
       show-paren-mode t
-      show-trailing-whitespace t
+;      show-trailing-whitespace t
       size-indication-mode t
+      tar-mode-show-date t
       uniquify-buffer-name-style 'forward
       use-dialog-box nil
       visible-bell t)
@@ -24,15 +28,20 @@
 
 (load custom-file)
 
-(global-set-key "\C-x\C-b" 'buffer-menu)
 (global-set-key "\C-xw" 'write-region)
 (global-set-key "\C-ce" 'shell)
 (global-set-key "\C-cf" 'find-function-other-window)
+(global-set-key "\C-cg" 'magit-status)
 (global-set-key "\C-cj" 'compile)
 (global-set-key "\C-ck" 'find-function-on-key)
-(global-set-key "\C-cl" 'locate)
+(global-set-key "\C-cl" 'magit-display-log)
 (global-set-key "\C-cq" 'bury-buffer)
-(global-set-key "\C-cz" 'suspend-frame)
+(global-set-key "\C-c0" '(lambda () (interactive) (shell "*shell*")))
+(global-set-key "\C-c1" '(lambda () (interactive) (shell "*shell*<1>")))
+(global-set-key "\C-c2" '(lambda () (interactive) (shell "*shell*<2>")))
+(global-set-key "\C-c3" '(lambda () (interactive) (shell "*shell*<3>")))
+(global-set-key "\C-c4" '(lambda () (interactive) (shell "*shell*<4>")))
+(global-set-key "\C-c5" '(lambda () (interactive) (shell "*shell*<5>")))
 (global-set-key [C-tab] 'mode-line-other-buffer)
 (global-set-key [M-left] 'backward-sexp)
 (global-set-key [M-right] 'forward-sexp)
@@ -41,13 +50,13 @@
 (set-scroll-bar-mode 'right)
 
 ;;; toolbar
-(tool-bar-mode)
+(tool-bar-mode 0)
 
 ;; ja font
-(set-fontset-font t 'japanese-jisx0208 "VL ゴシック")
+(set-fontset-font t 'japanese-jisx0208 "VL ゴシック 11")
 
 ;;; personal lisp dir
-(add-to-list 'load-path (expand-file-name "~/.emacs.d/lisp"))
+(add-to-list 'load-path "~/.emacs.d/lisp")
 
 ;;; browse-kill-ring (emacs-goodies)
 (if (commandp 'browse-kill-ring-default-keybindings)
@@ -111,10 +120,6 @@
 (iswitchb-default-keybindings)
 (defalias 'read-buffer 'iswitchb-read-buffer)
 
-;;; lookup
-(add-to-list 'load-path "~/.emacs.d/lisp/lookup/lisp")
-(autoload 'lookup "lookup" nil t)
-
 ;;; w3m
 (setq w3m-use-cookies t
       w3m-key-binding 'info
@@ -147,3 +152,47 @@
 
 ;;; uniquify
 (require 'uniquify)
+
+;;; ack
+(add-to-list 'load-path "~/.emacs.d/lisp/ShellArchive")
+(autoload 'ack "ack" nil t)
+
+;;; show-wspace
+;; (require 'show-wspace)
+;; (add-hook 'font-lock-mode-hook 'show-ws-highlight-tabs)
+;; (add-hook 'font-lock-mode-hook 'show-ws-highlight-trailing-whitespace)
+
+;;; whitespace
+(setq-default whitespace-style '(tabs trailing space-before-tab newline indentation empty space-after-tab))
+(global-whitespace-mode)
+
+;;; haskell-mode
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+(setq haskell-program-name "cabal-ghci")
+
+;;; calendar
+(add-hook 'calendar-move-hook 'calendar-update-mode-line)
+(setq calendar-mode-line-format
+  (list
+   '(let* ((year (calendar-extract-year date))
+           (d (calendar-day-number date))
+           (days-remaining
+            (- (calendar-day-number (list 12 31 year)) d)))
+      (format "day %d (%d left)" d days-remaining))
+   '(let* ((d (calendar-absolute-from-gregorian date))
+           (iso-date (calendar-iso-from-absolute d)))
+      (format "ISO week %d of %d"
+        (calendar-extract-month iso-date)
+        (calendar-extract-year iso-date)))))
+
+;;; git
+;(add-to-list 'load-path "~/.emacs.d/lisp/git-emacs")
+;(require 'git-emacs-autoloads)
+
+;;; package
+;;(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+
+;;; magit
+(setq magit-omit-untracked-dir-contents t)
+(put 'scroll-left 'disabled nil)
+(autoload 'magit-display-log "magit" nil t)
