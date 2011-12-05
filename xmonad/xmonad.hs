@@ -12,23 +12,27 @@ import XMonad.Layout.Minimize
 import XMonad.Layout.MouseResizableTile
 import XMonad.Layout.Named
 import XMonad.Layout.NoBorders
+import XMonad.Layout.TwoPane
 --import XMonad.Layout.PositionStoreFloat
 --import XMonad.Layout.WindowSwitcherDecoration
 
 --import XMonad.Actions.BluetileCommands
 import XMonad.Actions.CycleWS
-import XMonad.Actions.FindEmptyWorkspace
+--import XMonad.Actions.FindEmptyWorkspace
+import XMonad.Actions.GroupNavigation
+--import XMonad.Actions.PhysicalScreens
 import XMonad.Actions.Promote
 --import XMonad.Actions.WindowMenu
 
 --import XMonad.Hooks.CurrentWorkspaceOnTop
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.EwmhDesktops
+import XMonad.Hooks.FloatNext
 import XMonad.Hooks.ManageDocks
 --import XMonad.Hooks.PositionStoreHooks
 import XMonad.Hooks.RestoreMinimized
 import XMonad.Hooks.ServerMode
-import XMonad.Hooks.WorkspaceByPos
+--import XMonad.Hooks.WorkspaceByPos
 
 import XMonad.Config.Desktop
 
@@ -44,10 +48,7 @@ import Data.Monoid
 import Control.Monad(when)
 
 import DBus.Client.Simple
-import System.Taffybar.XMonadLog (dbusLog)
-
---bluetileWorkspaces :: [String]
---bluetileWorkspaces = ["1".."9"]
+--import System.Taffybar.XMonadLog (dbusLog)
 
 changeBacklight = "xbacklight -time 20 -steps 2 "
 
@@ -69,13 +70,7 @@ isFloating w = do
     ws <- gets windowset
     return $ M.member w (W.floating ws)
 
-bluetileManageHook :: ManageHook
-bluetileManageHook = composeAll
-               [ workspaceByPos
-                , className =? "MPlayer" --> doFloat
-                , manageDocks]
-
-layout =  desktopLayoutModifiers $ noBorders Full ||| tiled ||| Mirror tiled
+layout =  desktopLayoutModifiers $ noBorders Full ||| TwoPane (3/100) (1/2) ||| tiled ||| Mirror tiled
   where
      -- default tiling algorithm partitions the screen into two panes
      tiled   = Tall nmaster delta ratio
@@ -92,40 +87,47 @@ layout =  desktopLayoutModifiers $ noBorders Full ||| tiled ||| Mirror tiled
 myConfig =
     desktopConfig
         { modMask = mod4Mask,   -- logo key
---          manageHook = bluetileManageHook,
+          manageHook = floatNextHook <+> manageDocks,
           layoutHook = layout,
+          logHook = ewmhDesktopsLogHook <+> historyHook,
           handleEventHook = ewmhDesktopsEventHook
                                 `mappend` restoreMinimizedEventHook,
---          workspaces = bluetileWorkspaces,
---          keys = bluetileKeys,
+--          workspaces = ["1".."9"],
           keys = \cfg -> mkKeymap cfg (myKeymap cfg),
           mouseBindings = bluetileMouseBindings,
           focusFollowsMouse  = True,
           focusedBorderColor = "#ff5500",
           terminal = "gnome-terminal"
         }
-  where
 
-mykeys c = mkKeymap c (myKeymap c)
-myKeymap c = 
-           [ ("M-e", viewEmptyWorkspace)
-           , ("S-M-e", tagToEmptyWorkspace)
-           , ("S-M-k", kill)
-           , ("S-M-l", spawn "gnome-screensaver-command -l")
+myKeymap c =
+           [ ("M-b", nextMatchOrDo History (className =? "Google-chrome") (spawn "google-chrome"))
+           , ("M-c", nextMatchOrDo History (className =? "Xchat-gnome") (spawn "xchat-gnome"))
+           , ("M-e", nextMatchOrDo History (className =? "Emacs") (spawn "emacs"))
+           , ("M-t", nextMatchOrDo History (className =? "Gnome-terminal") (spawn "gnome-terminal"))
+           , ("M-v", nextMatchOrDo History (className =? "Virt-manager") (spawn "virt-manager"))
+           , ("M-f", withFocused $ windows . (\w -> W.float w (W.RationalRect 0.4 0.4 0.6 0.6)))
+           , ("M-S-f", withFocused $ windows . W.sink)
+           , ("M-S-k", kill)
+           , ("M-l", spawn "xflock4")
            , ("M-m", windows W.focusMaster)
            , ("M-n", refresh)
-           , ("M-q", restart "xmonad" True)
-           , ("S-M-q", io (exitWith ExitSuccess))
+           , ("M-q", spawn "xmonad --recompile; xmonad --restart")
+           , ("M-S-q", io (exitWith ExitSuccess))
+           , ("M-u", floatNext True)
+--           , ("M-x", spawn "dmenu_run -l 12")
            , ("M-x", spawn "gmrun")
+           , ("M-S-x", spawn "xfce4-appfinder")
            , ("<XF86MonBrightnessDown>", spawn "xbacklight -10")
            , ("<XF86MonBrightnessUp>", spawn "xbacklight +10")
            , ("M-<Tab>", windows W.focusDown)
-           , ("M-S-<Tab>", windows W.focusUp)
+--           , ("M-S-<Tab>", rotAllUp)
+           , ("M-S-<Tab>", nextMatch Forward (return True))
            , ("M-<Return>", spawn $ terminal c)
            , ("M-<Space>", sendMessage NextLayout)
            , ("M-S-<Space>", setLayout $ XMonad.layoutHook c)
-           , ("M-<Down>", withFocused $ windows . W.sink)
-           , ("M-<Up>", withFocused $ windows . (\w -> W.float w (W.RationalRect 0.4 0.4 0.6 0.6)))
+--           , ("M-<Down>", withFocused $ windows . W.sink)
+--           , ("M-<Up>", withFocused $ windows . (\w -> W.float w (W.RationalRect 0.4 0.4 0.6 0.6)))
            , ("M--", sendMessage Shrink)
            , ("M-=", sendMessage Expand)
            , ("M-S--", sendMessage (IncMasterN (-1))) -- %! Decrement the number of windows in the master area
@@ -140,4 +142,4 @@ myKeymap c =
 
 main = do
    dbusSess <- connectSession
-   xmonad myConfig { logHook = ewmhDesktopsLogHook `mappend` dbusLog dbusSess defaultPP }
+   xmonad myConfig -- { logHook = (logHook myConfig) <+> dbusLog dbusSess defaultPP }
