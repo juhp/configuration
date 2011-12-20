@@ -1,0 +1,11 @@
+#!/bin/sh
+
+CFGDIR=~/configuration
+
+diff -u {$CFGDIR/bluetile/,~/.}bluetilerc
+
+diff -u {$CFGDIR/emacs,~/.emacs.d}/init.el
+
+diff -u {$CFGDIR/,~/.}xmonad/xmonad.hs
+
+diff -u {$CFGDIR/,~/.}yi/yi.hs
