@@ -1,0 +1,107 @@
+start_dock: false
+
+# blue-ish theme where the focused window stands out more
+decoration_focused_color = #7ca3d3
+decoration_focused_text_color = white
+decoration_focused_border_color = #7ca3d3
+decoration_normal_color = #e3e2e1
+decoration_normal_text_color = black
+decoration_normal_border_color = #e3e2e1
+decoration_font = xft:Sans Bold:size=10
+#window_border_focused_color = black
+#window_border_normal_color = gray
+
+# launching and killing programs
+key_launch_terminal: DefaultMod+Shift+x
+key_gnome_run: DefaultMod+p
+key_close_window: DefaultMod+Shift+w
+key_refresh: DefaultMod+F5
+key_window_menu: DefaultMod+Ctrl+o
+
+# move focus
+key_focus_next_window: DefaultMod+j
+key_focus_prev_window: DefaultMod+k
+key_focus_master_window: DefaultMod+Space
+key_focus_next_window_alternative: DefaultMod+Tab
+key_focus_prev_window_alternative: DefaultMod+Shift+Tab
+
+# modifying the window order
+key_swap_with_master_window: DefaultMod+Shift+Space
+key_swap_with_next_window: DefaultMod+Shift+j
+key_swap_with_prev_window: DefaultMod+Shift+k
+
+# resizing the master/slave ratio
+key_shrink_master_area: DefaultMod+less
+key_expand_master_area: DefaultMod+greater
+key_shrink_slave_area: DefaultMod+underscore
+key_expand_slave_area: DefaultMod+asciicircum
+
+# dialog windows
+key_treat_as_regular_window: DefaultMod+n
+key_treat_as_dialog_window: DefaultMod+Shift+n
+
+# increase or decrease number of windows in the master area
+key_inc_windows_in_master_area: DefaultMod+comma
+key_dec_windows_in_master_area: DefaultMod+period
+
+# Metacity-like workspace switching
+key_prev_workspace: DefaultMod+Ctrl+Left
+key_next_workspace: DefaultMod+Ctrl+Right
+key_shift_window_to_prev_workspace: DefaultMod+Ctrl+Shift+Left
+key_shift_window_to_next_workspace: DefaultMod+Ctrl+Shift+Right
+
+# more Metacity keys
+#key_gnome_run_alternative: Mod1+F2
+#key_close_window_alternative: Mod1+F4
+
+# switching to layouts
+key_switch_to_layout_stacked: DefaultMod+a
+key_switch_to_layout_tiled1: DefaultMod+s
+key_switch_to_layout_tiled2: DefaultMod+d
+key_switch_to_layout_fullscreen: DefaultMod+f
+
+# maximizing and minimizing
+key_maximize_window: DefaultMod+z
+key_minimize_window: DefaultMod+0
+key_restore_minimized_window: DefaultMod+Shift+0
+
+# switching workspaces
+key_toggle_workspace: DefaultMod+l
+key_switch_to_workspace_1: DefaultMod+e
+key_switch_to_workspace_2: DefaultMod+b
+key_switch_to_workspace_3: DefaultMod+t
+key_switch_to_workspace_4: DefaultMod+p
+key_switch_to_workspace_5: DefaultMod+c
+key_switch_to_workspace_6: DefaultMod+h
+key_switch_to_workspace_7: DefaultMod+v
+key_switch_to_workspace_8: DefaultMod+m
+key_switch_to_workspace_9: DefaultMod+F9
+key_switch_to_workspace_0: DefaultMod+F10
+
+# moving clients to workspaces
+key_shift_window_to_workspace_1: DefaultMod+Shift+e
+key_shift_window_to_workspace_2: DefaultMod+Shift+b
+key_shift_window_to_workspace_3: DefaultMod+Shift+t
+key_shift_window_to_workspace_4: DefaultMod+Shift+p
+key_shift_window_to_workspace_5: DefaultMod+Shift+c
+key_shift_window_to_workspace_6: DefaultMod+Shift+h
+key_shift_window_to_workspace_7: DefaultMod+Shift+v
+key_shift_window_to_workspace_8: DefaultMod+Shift+m
+key_shift_window_to_workspace_9: DefaultMod+Shift+F9
+key_shift_window_to_workspace_0: DefaultMod+Shift+F10
+
+# multi head: switching and moving clients
+key_switch_to_screen_0: DefaultMod+Down
+key_switch_to_screen_1: DefaultMod+Up
+#key_switch_to_screen_2: DefaultMod+r
+key_shift_window_to_screen_0: DefaultMod+Shift+Down
+key_shift_window_to_screen_1: DefaultMod+Shift+Up
+#key_shift_window_to_screen_2: DefaultMod+Shift+r
+
+# misc keybindings - note: these are only listed
+# for the sake of completeness, some might not work
+# correctly and are only used during development
+focus_follows_mouse: false
+key_quit_bluetile: DefaultMod+Shift+q
+key_restart_bluetile: DefaultMod+q
+key_reset_layouts: DefaultMod+Shift+F5
