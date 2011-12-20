@@ -20,8 +20,9 @@ import XMonad.Layout.TwoPane
 import XMonad.Actions.CycleWS
 --import XMonad.Actions.FindEmptyWorkspace
 import XMonad.Actions.GroupNavigation
---import XMonad.Actions.PhysicalScreens
+import XMonad.Actions.PhysicalScreens
 import XMonad.Actions.Promote
+--import XMonad.Actions.RotSlaves
 --import XMonad.Actions.WindowMenu
 
 --import XMonad.Hooks.CurrentWorkspaceOnTop
@@ -48,12 +49,14 @@ import Data.Monoid
 import Control.Monad(when)
 
 import DBus.Client.Simple
---import System.Taffybar.XMonadLog (dbusLog)
+import System.Taffybar.XMonadLog (dbusLog)
+import Web.Encodings (encodeHtml)
+
 
 changeBacklight = "xbacklight -time 20 -steps 2 "
 
-bluetileMouseBindings :: XConfig Layout -> M.Map (KeyMask, Button) (Window -> X ())
-bluetileMouseBindings (XConfig {XMonad.modMask = modMask'}) = M.fromList $
+myMouseBindings :: XConfig Layout -> M.Map (KeyMask, Button) (Window -> X ())
+myMouseBindings (XConfig {XMonad.modMask = modMask'}) = M.fromList $
     -- mod-button1 %! Move a floated window by dragging
     [ ((modMask', button1), (\w -> isFloating w >>= \isF -> when (isF) $
                                 focus w >> mouseMoveWindow w >> windows W.shiftMaster))
@@ -94,7 +97,7 @@ myConfig =
                                 `mappend` restoreMinimizedEventHook,
 --          workspaces = ["1".."9"],
           keys = \cfg -> mkKeymap cfg (myKeymap cfg),
-          mouseBindings = bluetileMouseBindings,
+          mouseBindings = myMouseBindings,
           focusFollowsMouse  = True,
           focusedBorderColor = "#ff5500",
           terminal = "gnome-terminal"
@@ -109,25 +112,22 @@ myKeymap c =
            , ("M-f", withFocused $ windows . (\w -> W.float w (W.RationalRect 0.4 0.4 0.6 0.6)))
            , ("M-S-f", withFocused $ windows . W.sink)
            , ("M-S-k", kill)
-           , ("M-l", spawn "xflock4")
+           , ("M-l", nextMatch History (return True))
+           , ("M-S-l", spawn "xflock4")
            , ("M-m", windows W.focusMaster)
            , ("M-n", refresh)
            , ("M-q", spawn "xmonad --recompile; xmonad --restart")
            , ("M-S-q", io (exitWith ExitSuccess))
            , ("M-u", floatNext True)
---           , ("M-x", spawn "dmenu_run -l 12")
            , ("M-x", spawn "gmrun")
            , ("M-S-x", spawn "xfce4-appfinder")
            , ("<XF86MonBrightnessDown>", spawn "xbacklight -10")
            , ("<XF86MonBrightnessUp>", spawn "xbacklight +10")
-           , ("M-<Tab>", windows W.focusDown)
---           , ("M-S-<Tab>", rotAllUp)
-           , ("M-S-<Tab>", nextMatch Forward (return True))
+           , ("M-<Tab>", nextMatchWithThis Forward className)
+           , ("M-S-<Tab>", windows W.focusDown)
            , ("M-<Return>", spawn $ terminal c)
            , ("M-<Space>", sendMessage NextLayout)
            , ("M-S-<Space>", setLayout $ XMonad.layoutHook c)
---           , ("M-<Down>", withFocused $ windows . W.sink)
---           , ("M-<Up>", withFocused $ windows . (\w -> W.float w (W.RationalRect 0.4 0.4 0.6 0.6)))
            , ("M--", sendMessage Shrink)
            , ("M-=", sendMessage Expand)
            , ("M-S--", sendMessage (IncMasterN (-1))) -- %! Decrement the number of windows in the master area
@@ -139,7 +139,15 @@ myKeymap c =
            , (f, m) <- [(W.view, ""), (W.shift, "S-")]]
 --           ++
 --           [("M-" ++ show (n+1) , focusNth n) | n <- [0..8]]
+           ++
+           [(m ++ "M-" ++ key, f sc)
+                |  (key, sc) <- zip ["<Up>", "<Down>"] [0..]
+                , (f, m) <- [(viewScreen, ""), (sendToScreen, "S-")]]
+
+taffyPP = defaultPP { ppCurrent = wrap "<span foreground=\"red\">" "</span>"
+                    , ppTitle = (wrap "<b>" "</b>") . encodeHtml  . shorten 90 }
+
 
 main = do
    dbusSess <- connectSession
-   xmonad myConfig -- { logHook = (logHook myConfig) <+> dbusLog dbusSess defaultPP }
+   xmonad myConfig { logHook = logHook myConfig <+> dbusLog dbusSess taffyPP }
