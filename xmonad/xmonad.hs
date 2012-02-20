@@ -48,10 +48,6 @@ import System.Exit
 import Data.Monoid
 import Control.Monad(when)
 
-import DBus.Client.Simple
-import System.Taffybar.XMonadLog (dbusLog)
-import Web.Encodings (encodeHtml)
-
 
 myMouseBindings :: XConfig Layout -> M.Map (KeyMask, Button) (Window -> X ())
 myMouseBindings (XConfig {XMonad.modMask = modMask'}) = M.fromList $
