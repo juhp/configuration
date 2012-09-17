@@ -24,6 +24,9 @@ import XMonad.Actions.Promote
 --import XMonad.Actions.RotSlaves
 --import XMonad.Actions.WindowMenu
 
+import XMonad.Config.Bluetile
+import XMonad.Config.Gnome (gnomeRun)
+
 --import XMonad.Hooks.CurrentWorkspaceOnTop
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.EwmhDesktops
@@ -34,8 +37,8 @@ import XMonad.Hooks.RestoreMinimized
 import XMonad.Hooks.ServerMode
 --import XMonad.Hooks.WorkspaceByPos
 
-import XMonad.Config.Bluetile
-import XMonad.Config.Gnome (gnomeRun)
+import XMonad.Prompt
+import XMonad.Prompt.Window
 
 import XMonad.Util.EZConfig
 --import XMonad.Util.Replace
@@ -51,15 +54,10 @@ import Control.Monad(when)
 
 myMouseBindings :: XConfig Layout -> M.Map (KeyMask, Button) (Window -> X ())
 myMouseBindings (XConfig {XMonad.modMask = modMask'}) = M.fromList $
-    -- mod-button1 %! Move a floated window by dragging
-    [ ((modMask', button1), (\w -> isFloating w >>= \isF -> when (isF) $
-                                focus w >> mouseMoveWindow w >> windows W.shiftMaster))
+    [
     -- mod-button2 %! Switch to next and first layout
-    , ((modMask', button2), (\_ -> sendMessage NextLayout))
+      ((modMask', button2), (\_ -> sendMessage NextLayout))
     , ((modMask' .|. shiftMask, button2), (\_ -> sendMessage $ JumpToLayout "Floating"))
-    -- mod-button3 %! Resize a floated window by dragging
-    , ((modMask', button3), (\w -> isFloating w >>= \isF -> when (isF) $
-                                focus w >> mouseResizeWindow w >> windows W.shiftMaster))
     ]
 
 isFloating :: Window -> X (Bool)
@@ -95,7 +93,7 @@ myConfig =
           logHook = logHook bluetileConfig <+> historyHook,
           keys = \cfg -> mkKeymap cfg (myKeymap cfg),
           mouseBindings = myMouseBindings,
-          focusedBorderColor = "gray",
+          focusedBorderColor = "darkgray",
           normalBorderColor = "gray"
         }
 
@@ -106,25 +104,24 @@ myKeymap c =
            , ("M-s", sendMessage $ JumpToLayout "Tiled1")
            , ("M-d", sendMessage $ JumpToLayout "Tiled2")
            , ("M-f", sendMessage $ JumpToLayout "Fullscreen")
-           , ("M-m", withFocused minimizeWindow)
-           , ("M-S-m", sendMessage RestoreNextMinimizedWin)
            , ("M-z", withFocused (sendMessage . maximizeRestore))
            , ("M-b", nextMatchOrDo History (className =? "Google-chrome") (spawnEmpty "google-chrome"))
            , ("M-c", nextMatchOrDo History (className =? "Xchat-gnome") (spawnEmpty "xchat-gnome"))
            , ("M-e", nextMatchOrDo History (className =? "Emacs") (spawnEmpty "emacs"))
            , ("M-t", nextMatchOrDo History (className =? "Gnome-terminal") (spawnEmpty "gnome-terminal"))
+           , ("M-S-t", spawn $ terminal c)
            , ("M-v", nextMatchOrDo History (className =? "Virt-manager") (spawnEmpty "virt-manager"))
-
+           , ("M-m", nextMatchOrDo History (className =? "Firefox") (spawnEmpty "firefox"))
            , ("M-g", gnomeRun)
            , ("M-S-k", kill)
            , ("M-l", nextMatch History (return True))
            , ("M-S-l", spawn "xflock4")
            , ("M-n", viewEmptyWorkspace)
            , ("M-S-n", tagToEmptyWorkspace)
-           , ("M-q", spawn "xmonad --recompile; xmonad --restart")
-           , ("M-S-q", io (exitWith ExitSuccess))
+           , ("M-q", spawn "if type xmonad; then xmonad --recompile && xmonad --restart; else xmessage \"xmonad not found!\"; fi")
+--           , ("M-S-q", io (exitWith ExitSuccess))
            , ("M-r", refresh)
-           , ("M-S-t", spawn $ terminal c)
+           , ("M-w", windowPromptGoto defaultXPConfig)
            , ("M-x", spawn "gmrun")
            , ("M-S-x", spawnEmpty "gmrun")
            , ("M-<Tab>", windows W.focusDown)
