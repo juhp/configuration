@@ -1,0 +1,11 @@
+#!/bin/sh
+
+REPO=$1
+shift
+
+case $REPO in
+     test*) REPO=updates-testing ;;
+esac
+
+sudo yum --enablerepo=$REPO $*
+

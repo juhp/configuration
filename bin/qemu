@@ -1,0 +1,4 @@
+#!/bin/sh
+
+echo qemu-kvm -m 1024 -vga qxl -usb -localtime -k en-us $*
+qemu-kvm -m 1024 -vga qxl -usb -localtime -k en-us $*

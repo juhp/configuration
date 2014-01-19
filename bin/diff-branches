@@ -1,0 +1,4 @@
+#!/bin/sh
+
+
+diff -u --exclude="*.src.rpm" --exclude="*.tar.bz2" --exclude="*.tar.gz" --exclude="*.tgz" --exclude="*~" --exclude=".build-*.log" --exclude="CVS" --exclude="FC-*" --exclude="Makefile" --exclude="RHEL-*" --exclude="branch" --exclude="common" --exclude="i386" --exclude="x86_64" --exclude=".#*" --exclude="_darcs" --exclude=".git" $*

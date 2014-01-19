@@ -1,0 +1,21 @@
+#!/bin/sh
+
+if [ $# -ne 1 ]; then
+    echo "Usage: $(basename $0) [package]"
+    exit 1
+fi
+
+if ! wmctrl -x -a $1; then
+    case $1 in
+        gnome-terminal) WS=0 ;;
+        emacs) WS=1 ;;
+        google-chrome) WS=2 ;;
+        xchat-gnome) WS=5 ;;
+        virt-manager) WS=6 ;;
+        firefox) WS=7 ;;
+        libreoffice) WS=8 ;;
+        *) WS=9
+    esac
+    wmctrl -s $WS
+    $1
+fi

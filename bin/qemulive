@@ -1,0 +1,3 @@
+#!/bin/sh
+
+qemu -boot d -cdrom $1

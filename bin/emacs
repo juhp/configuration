@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# turn off XIM
+
+LANG=en_US.utf8 LC_COLLATE=C XMODIFIERS=@im=none /usr/bin/emacs -g 167x51 $@
