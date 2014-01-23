@@ -9,3 +9,5 @@ diff -u {$CFGDIR/emacs,~/.emacs.d}/init.el
 diff -u {$CFGDIR/,~/.}xmonad/xmonad.hs
 
 diff -u {$CFGDIR/,~/.}yi/yi.hs
+
+diff -u {$CFGDIR/,~/}bin/launch

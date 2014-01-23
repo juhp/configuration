@@ -1,21 +1,29 @@
 #!/bin/sh
 
+set -e +x
+
 if [ $# -ne 1 ]; then
     echo "Usage: $(basename $0) [package]"
     exit 1
 fi
 
-if ! wmctrl -x -a $1; then
-    case $1 in
-        gnome-terminal) WS=0 ;;
-        emacs) WS=1 ;;
-        google-chrome) WS=2 ;;
-        xchat-gnome) WS=5 ;;
-        virt-manager) WS=6 ;;
-        firefox) WS=7 ;;
-        libreoffice) WS=8 ;;
-        *) WS=9
-    esac
+# how to switch to running apps
+CMD=-a
+
+case $1 in
+    gnome-terminal) WS=0 ;;
+    emacs) WS=1 ;;
+    google-chrome) WS=2 CMD="-s$WS" ;;
+    xchat-gnome) WS=5 ;;
+    virt-manager) WS=6 CMD="-s$WS" ;;
+    firefox) WS=7 ;;
+    libreoffice) WS=8 ;;
+    *) WS=9
+esac
+
+if wmctrl -x -l | grep -q $1; then
+    wmctrl -x $CMD $1
+else
     wmctrl -s $WS
     $1
 fi
