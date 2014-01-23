@@ -6,7 +6,6 @@
       enable-recursive-minibuffers t
       frame-title-format "%b - emacs"
       help-window-select t
-      indent-tabs-mode nil
       inhibit-startup-screen t
       ;;? ispell-dictionary "english"
       kill-do-not-save-duplicates t
@@ -15,14 +14,14 @@
       save-place-file "~/.emacs.d/saveplaces.el"
       save-place-limit 1000
       show-paren-mode t
-;      show-trailing-whitespace t
       size-indication-mode t
       tar-mode-show-date t
       uniquify-buffer-name-style 'forward
       use-dialog-box nil
       visible-bell t)
 
-(setq-default indicate-buffer-boundaries 'left
+(setq-default indent-tabs-mode nil
+	      indicate-buffer-boundaries 'left
 	      indicate-empty-lines t
 	      save-place t)
 
@@ -168,7 +167,9 @@
 
 ;;; haskell-mode
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-(setq haskell-program-name "cabal-ghci")
+(eval-after-load 'haskell-mode
+  '(define-key haskell-mode-map "\C-ch" 'haskell-hoogle))
+(setq haskell-hoogle-command "hoogle")
 
 ;;; calendar
 (add-hook 'calendar-move-hook 'calendar-update-mode-line)
@@ -196,3 +197,6 @@
 (setq magit-omit-untracked-dir-contents t)
 (put 'scroll-left 'disabled nil)
 (autoload 'magit-display-log "magit" nil t)
+
+;;; browse-url
+(setq browse-url-browser-function 'browse-url-xdg-open)
