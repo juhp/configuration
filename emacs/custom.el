@@ -4,7 +4,6 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(column-number-mode t)
- '(ecb-options-version "2.40")
  '(indicate-buffer-boundaries (quote right))
  '(indicate-empty-lines t)
  '(show-paren-mode t)
