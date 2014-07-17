@@ -1,0 +1,10 @@
+#!/bin/sh
+
+ID=$(docker ps -a | grep $1 | hawk -a 'head . head')
+
+if [ -n "$ID" ]; then
+    docker start $ID
+    docker attach $ID
+else
+    docker run $1
+fi
