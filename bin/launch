@@ -13,7 +13,7 @@ CMD=-a
 case $1 in
     gnome-terminal) WS=0 ;;
     emacs) WS=1 ;;
-    google-chrome) WS=2 CMD="-s$WS" ;;
+    google-chrome) WS=2 CMD="-s$WS" ENV="LANG=ja_JP.utf8" ;;
     xchat-gnome) WS=5 ;;
     virt-manager) WS=6 CMD="-s$WS" ;;
     firefox) WS=7 ;;
@@ -27,6 +27,6 @@ else
     if wmctrl -x -l | grep -qi "[^/:]$1"; then
         wmctrl -x $CMD $1
     else
-        $1
+        env $ENV $1
     fi
 fi
