@@ -21,9 +21,12 @@ case $1 in
     *) WS=9
 esac
 
-if wmctrl -x -l | grep -qi "[^/:]$1"; then
-    wmctrl -x $CMD $1
-else
+if ! wmctrl -d | grep -q "$WS  \* DG:"; then
     wmctrl -s $WS
-    $1
+else
+    if wmctrl -x -l | grep -qi "[^/:]$1"; then
+        wmctrl -x $CMD $1
+    else
+        $1
+    fi
 fi
