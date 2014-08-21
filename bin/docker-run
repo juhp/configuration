@@ -1,10 +1,18 @@
 #!/bin/sh
 
-ID=$(docker ps -a | grep $1 | hawk -a 'head . head')
+if [ -z "$1" ]; then
+    echo "Usage: $0 [image/container]"
+    exit 1
+fi
 
-if [ -n "$ID" ]; then
+CNT=$(docker ps -a | tail -n +2 | grep "$1" | head -1)
+
+if [ -n "$CNT" ]; then
+    echo $CNT
+    ID=$(echo $CNT | awk -F: '{print $1}')
     docker start $ID
     docker attach $ID
 else
-    docker run $1
+    IMG=$(docker images | tail -n +2 | grep "$1" | head -1 | awk -F: '{print $3}')
+    docker run $IMG
 fi
