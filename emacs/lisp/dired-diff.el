@@ -47,7 +47,7 @@
 				(concat "["
 					(dired-make-relative
 					 default
-					 (dired-current-directory) t)
+					 (dired-current-directory))
 					"] ")
 			      ""))
 		    default-directory default t)))
