@@ -1,0 +1,22 @@
+# .bash_profile
+
+# Get the aliases and functions
+if [ -f ~/.bashrc ]; then
+	. ~/.bashrc
+fi
+
+# User specific environment and startup programs
+
+PATH=$HOME/bin:$HOME/.cabal/bin:$PATH
+
+export PATH
+
+export PANGO_LANGUAGE=ja
+
+export VIRSH_DEFAULT_CONNECT_URI=qemu:///system
+
+export DARCS_PAGER=cat
+
+export RPM_BUILD_NCPUS=2
+
+export TMPDIR=$HOME/tmp
