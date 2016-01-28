@@ -2,12 +2,20 @@
 
 CFGDIR=~/configuration
 
-diff -u {$CFGDIR/bluetile/,~/.}bluetilerc
 
-diff -u {$CFGDIR/emacs,~/.emacs.d}/init.el
+for i in init custom; do
+    diff -u {$CFGDIR/emacs,~/.emacs.d}/$i.el
+done
 
-diff -u {$CFGDIR/,~/.}xmonad/xmonad.hs
+#diff -u {$CFGDIR/bluetile/,~/.}bluetilerc
+#diff -u {$CFGDIR/,~/.}xmonad/xmonad.hs
+#diff -u {$CFGDIR/,~/.}yi/yi.hs
 
-diff -u {$CFGDIR/,~/.}yi/yi.hs
+# docker-run google-chrome touchpad-natural-scroll
+for i in diff-branches emacs launch qemu qemulive qemusb yum-repo; do
+    diff -u {$CFGDIR/,~/}bin/$i
+done
 
-diff -u {$CFGDIR/,~/}bin/launch
+for i in bash_profile bashrc; do
+    diff -u {$CFGDIR/bash/,~/.}$i
+done
