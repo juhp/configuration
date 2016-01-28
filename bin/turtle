@@ -1,0 +1,3 @@
+#!/bin/sh
+
+ghci -ghci-script ~/.turtle.ghci -package turtle -package foldl

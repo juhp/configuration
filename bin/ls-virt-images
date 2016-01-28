@@ -1,0 +1,5 @@
+#!/bin/sh
+
+DIR=/var/lib/libvirt/images
+echo $DIR/
+sudo ls -lth $DIR

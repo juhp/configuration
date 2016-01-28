@@ -1,0 +1,26 @@
+#!/bin/sh
+
+set -e +x
+
+# wmctrl -x -r gnome-terminal -t 0
+# wmctrl -x -r emacs -t 1
+# wmctrl -x -r firefox -t 2
+# wmctrl -x -r xchat-gnome -t 3
+# wmctrl -x -r chromium -t 4
+# wmctrl -x -r virt-manager -t 5
+
+move_win() {
+    case $3 in
+        *nome-terminal) WS=0 ;;
+        *macs) WS=1 ;;
+        *irefox) WS=2 ;;
+        *chat-gnome) WS=3 ;;
+        *chromium-browser) WS=4 ;;
+        *irt-manager) WS=5 CMD="-s$WS" ;;
+        *ibreoffice) WS=6 ;;
+        *) WS=7 ;;
+    esac
+    wmctrl -i -r $1 -t $WS
+}
+
+wmctrl -x -l | while read win; do move_win $win ; done

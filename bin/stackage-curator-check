@@ -1,0 +1,4 @@
+#!/bin/sh
+
+stack --resolver nightly -j1 install stackage-curator
+stack --resolver nightly exec stackage-curator check
