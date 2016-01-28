@@ -7,7 +7,7 @@ fi
 
 # User specific environment and startup programs
 
-PATH=$HOME/bin:$HOME/.cabal/bin:$PATH
+PATH=$HOME/bin:$HOME/.local/bin:$HOME/.cabal/bin:$PATH
 
 export PATH
 

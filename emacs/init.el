@@ -7,7 +7,6 @@
       frame-title-format "%b - emacs"
       help-window-select t
       inhibit-startup-screen t
-      ;;? ispell-dictionary "english"
       kill-do-not-save-duplicates t
       kill-ring-max 128
       kill-whole-line t
@@ -33,7 +32,7 @@
 (global-set-key "\C-cg" 'magit-status)
 (global-set-key "\C-cj" 'compile)
 (global-set-key "\C-ck" 'find-function-on-key)
-(global-set-key "\C-cl" 'magit-display-log)
+(global-set-key "\C-cl" 'magit-log)
 (global-set-key "\C-cq" 'bury-buffer)
 (global-set-key "\C-c0" '(lambda () (interactive) (shell "*shell*")))
 (global-set-key "\C-c1" '(lambda () (interactive) (shell "*shell*<1>")))
@@ -41,6 +40,7 @@
 (global-set-key "\C-c3" '(lambda () (interactive) (shell "*shell*<3>")))
 (global-set-key "\C-c4" '(lambda () (interactive) (shell "*shell*<4>")))
 (global-set-key "\C-c5" '(lambda () (interactive) (shell "*shell*<5>")))
+(global-set-key "\C-z" 'isearchb-activate)
 (global-set-key [C-tab] 'mode-line-other-buffer)
 (global-set-key [M-left] 'backward-sexp)
 (global-set-key [M-right] 'forward-sexp)

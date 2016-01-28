@@ -13,14 +13,15 @@ CMD=-a
 case $1 in
     gnome-terminal) WS=0 ;;
     emacs) WS=1 ;;
-    google-chrome) WS=2 CMD="-s$WS" ENV="LANG=ja_JP.utf8" ;;
-    xchat-gnome) WS=5 ;;
-    virt-manager) WS=6 CMD="-s$WS" ;;
-    firefox) WS=7 ;;
-    libreoffice) WS=8 ;;
-    *) WS=9
+    firefox) WS=2 ;;
+    xchat-gnome) WS=3 ;;
+    chromium-browser) WS=4 CMD="-s$WS" ENV="LANG=ja_JP.utf8" ;;
+    virt-manager) WS=5 CMD="-s$WS" ;;
+    libreoffice) WS=6 ;;
+    *) WS=7
 esac
 
+# '*' = current WS
 if ! wmctrl -d | grep -q "$WS  \* DG:"; then
     wmctrl -s $WS
 else
