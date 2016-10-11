@@ -1,0 +1,10 @@
+#!/bin/sh
+
+VER=$1
+shift
+
+GHCPATH=$HOME/.stack/programs/x86_64-linux/ghc-$VER/bin
+
+export PATH=$GHCPATH:$PATH
+
+exec $*
