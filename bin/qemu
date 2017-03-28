@@ -1,4 +1,7 @@
 #!/bin/sh
 
-echo qemu-kvm -m 1024 -vga qxl -usb -localtime -k en-us $*
-qemu-kvm -m 1024 -vga qxl -usb -localtime -k en-us $*
+# -vga qxl
+
+CMD="qemu-kvm -m 1536 -usb -localtime -k en-us $*"
+echo $CMD
+$CMD
