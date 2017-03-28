@@ -14,8 +14,8 @@ case $1 in
     gnome-terminal) WS=0 ;;
     emacs) WS=1 ;;
     firefox) WS=2 ;;
-    xchat-gnome) WS=3 ;;
-    chromium-browser) WS=4 CMD="-s$WS" ENV="LANG=ja_JP.utf8" ;;
+    polari) WS=3 ;;
+    chromium) WS=4 CMD="-s$WS" ENV="LANG=ja_JP.utf8" ;;
     virt-manager) WS=5 CMD="-s$WS" ;;
     libreoffice) WS=6 ;;
     *) WS=7
