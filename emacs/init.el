@@ -1,5 +1,13 @@
 ;;; .emacs.d/init.el
 
+
+(require 'package)
+;;(add-to-list 'package-archives
+;;             '("melpa" . "https://melpa.org/packages/"))
+(add-to-list 'package-archives
+             '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+(package-initialize) ;; You might already have this line
+
 (setq column-number-mode t
       custom-file "~/.emacs.d/custom.el"
       diff-switches "-u"
@@ -32,7 +40,7 @@
 (global-set-key "\C-cg" 'magit-status)
 (global-set-key "\C-cj" 'compile)
 (global-set-key "\C-ck" 'find-function-on-key)
-(global-set-key "\C-cl" 'magit-log)
+(global-set-key "\C-cl" 'magit-log-current)
 (global-set-key "\C-cq" 'bury-buffer)
 (global-set-key "\C-c0" '(lambda () (interactive) (shell "*shell*")))
 (global-set-key "\C-c1" '(lambda () (interactive) (shell "*shell*<1>")))
@@ -84,7 +92,7 @@
 ;;; dired-x
 (setq dired-guess-shell-alist-user 
       '(("\\.pdf$" "evince")
-	("\\.t\\(ar\\.bz2\\|bz\\)$" "tar jxvf" "tar jtvf")
+	("\\.tar.*$" "tar tvf" "tar xvf")
 	))
 (require 'dired-x)
 
@@ -115,6 +123,7 @@
 (ffap-bindings)
 
 ;;; iswitchb
+;(iswitchb-mode)
 (require 'iswitchb)
 (iswitchb-default-keybindings)
 (defalias 'read-buffer 'iswitchb-read-buffer)
@@ -190,9 +199,6 @@
 ;(add-to-list 'load-path "~/.emacs.d/lisp/git-emacs")
 ;(require 'git-emacs-autoloads)
 
-;;; package
-;;(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
-
 ;;; magit
 (setq magit-omit-untracked-dir-contents t)
 (put 'scroll-left 'disabled nil)
@@ -200,3 +206,7 @@
 
 ;;; browse-url
 (setq browse-url-browser-function 'browse-url-xdg-open)
+
+;; Intero
+(package-install 'intero)
+;(add-hook 'haskell-mode-hook 'intero-mode)
