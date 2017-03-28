@@ -1,5 +1,14 @@
 #!/bin/sh
 
-#stack --resolver nightly -j1 install stackage-curator
+BUILD=no
+
+if [ "$BUILD" = "yes" ]; then
+#    pushd ~/haskell/stackage-curator
+#    git pull
+   stack-nightly install stackage-curator
+#    popd
+#:
+fi
+
 stack update
-stack --resolver nightly -j1 exec stackage-curator check
+stack --resolver lts-8 exec /home/petersen/.local/bin/stackage-curator check
