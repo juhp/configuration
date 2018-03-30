@@ -1,0 +1,20 @@
+#!/bin/sh
+
+case $1 in
+    8.4*) RESOLVE=nightly
+           ;;
+    8.2*) RESOLVE=lts-11
+           ;;
+    8.0*) RESOLVE=lts-9
+           ;;
+    7.10*) RESOLVE=lts-6
+           ;;
+    7.8*) RESOLVE=lts-2
+           ;;
+    *) echo "unknown ghc version"
+       exit 1
+       ;;
+esac
+shift
+    
+stack -j1 --resolver ${RESOLVE} $*

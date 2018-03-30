@@ -1,0 +1,3 @@
+#!/bin/sh
+
+kinit petersen@FEDORAPROJECT.ORG
