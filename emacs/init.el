@@ -2,11 +2,11 @@
 
 
 (require 'package)
-;;(add-to-list 'package-archives
-;;             '("melpa" . "https://melpa.org/packages/"))
 (add-to-list 'package-archives
              '("melpa-stable" . "https://stable.melpa.org/packages/") t)
-(package-initialize) ;; You might already have this line
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/"))
+(package-initialize)
 
 (setq column-number-mode t
       custom-file "~/.emacs.d/custom.el"
@@ -76,6 +76,19 @@
 ;;; dired
 (setq dired-keep-marker-rename ?R)
 
+(defun ora-ediff-files ()
+  (interactive)
+  (let ((files (dired-get-marked-files)))
+    (if (<= (length files) 2)
+        (let ((file1 (car files))
+              (file2 (if (cdr files)
+                         (cadr files)
+                       (read-file-name
+                        "file: "
+                        ))))
+          (ediff-files file2 file1))
+      (error "no more than 2 files should be marked"))))
+
 ;; dired-diff
 (autoload 'dired-diff "dired-diff" nil t)
 (autoload 'dired-backup-diff "dired-diff" nil t)
@@ -86,7 +99,7 @@
 (define-key dired-mode-map "=b" 'dired-backup-diff)
 (define-key dired-mode-map "=m" 'dired-emerge)
 (define-key dired-mode-map "=a" 'dired-emerge-with-ancestor)
-(define-key dired-mode-map "=e" 'dired-ediff)
+(define-key dired-mode-map "=e" 'ora-ediff-files)
 (define-key dired-mode-map "=p" 'dired-epatch)
 
 ;;; dired-x

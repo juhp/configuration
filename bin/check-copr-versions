@@ -3,7 +3,7 @@
 cabal update
 echo
 
-for i in cabal-install hsb2hs pandoc pandoc-citeproc stack idris; do
+for i in cabal-install hsb2hs pandoc pandoc-citeproc stack idris git-annex hlint; do
   installed=$(rpm -q --qf "%{version}" $i)
   upstream=$(cabal list --simple-output $i | grep "^$i " | grep -v 9.9.9 | tail -1 | sed -e "s/$i //")
   if [ "$installed" != "$upstream" ]; then

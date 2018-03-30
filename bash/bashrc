@@ -9,9 +9,7 @@ fi
 # export SYSTEMD_PAGER=
 
 # User specific aliases and functions
-#alias ssh=/usr/bin/ssh
 #alias man='LANG=C man'
-#alias yum='yum -v'
 
 source /usr/share/git-core/contrib/completion/git-prompt.sh
 PS1='\[$(tput bold)\]\[$(tput setaf 4)\][\u@\h \w$(__git_ps1 ":%s")]\[$(tput sgr0)\]\\$ '
