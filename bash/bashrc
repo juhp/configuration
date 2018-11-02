@@ -16,10 +16,10 @@ alias ls='ls --color=auto'
 #PS1='\[$(tput bold)\]\[$(tput setaf 4)\][\u@\h \w$(__git_ps1 ":%s")]\[$(tput sgr0)\]\\$ '
 
 if [ "$TERM" != "dumb" ]; then
-    WHITE="$(tput setaf 15)"
+    WHITE="\[$(tput setaf 15)\]"
     RED="$(tput setab 1)"
-    GREEN="$(tput setab 2)"
-    BROWN="$(tput setab 3)"
+    GREEN="\[$(tput setab 2)\]"
+    ORANGE="$(tput setab 3)"
     BLUE="$(tput setab 4)"
     YELLOW="\[$(tput setab 11)\]"
     COL_RESET="\[$(tput sgr0)\]"
@@ -28,7 +28,7 @@ if [ "$TERM" != "dumb" ]; then
 else
     RED="\[\033[0;31m\]"
     GREEN="\[\033[01;32m\]"
-    BROWN="\[\033[01;33m\]"
+    ORANGE="\[\033[01;33m\]"
     BLUE="\[\033[01;34m\]"
     YELLOW="\[\033[0;33m\]"
     COL_RESET="\[\033[0m\]"
@@ -43,6 +43,6 @@ function parse_git_branch {
 PROMPT_COMMAND=parse_git_branch
 
 PS_USERHOST="$BLUE$PS_PAD\u@\h$PS_CLOSE"
-PS_TIME="$RED$PS_PAD\t$PS_CLOSE"
+PS_TIME="$ORANGE$PS_PAD\t$PS_CLOSE"
 PS_DIR="$GREEN$PS_PAD\w$PS_CLOSE"
-PS1="$WHITE$PS_USERHOST$PS_TIME$PS_DIR${BROWN}"\$PS_GIT"$COL_RESET\n${YELLOW}⏵$COL_RESET "
+PS1="$WHITE$PS_USERHOST$PS_TIME${RED}"\$PS_GIT"$COL_RESET\n$WHITE$PS_DIR⏵$COL_RESET "
