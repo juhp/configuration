@@ -16,5 +16,5 @@ case $1 in
        ;;
 esac
 shift
-    
+
 stack -j1 --resolver ${RESOLVE} $*
