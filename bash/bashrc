@@ -15,13 +15,14 @@ alias ls='ls --color=auto'
 #source /usr/share/git-core/contrib/completion/git-prompt.sh
 #PS1='\[$(tput bold)\]\[$(tput setaf 4)\][\u@\h \w$(__git_ps1 ":%s")]\[$(tput sgr0)\]\\$ '
 
+
+#substract 8 for dark (bg) colours
 if [ "$TERM" != "dumb" ]; then
     WHITE="\[$(tput setaf 15)\]"
-    RED="$(tput setab 1)"
-    GREEN="\[$(tput setab 2)\]"
+    RED="$(tput setab 9)"
+    GREEN="\[$(tput setab 10)\]"
     ORANGE="$(tput setab 3)"
-    BLUE="$(tput setab 4)"
-    YELLOW="\[$(tput setab 11)\]"
+    BLUE="$(tput setab 12)"
     COL_RESET="\[$(tput sgr0)\]"
     PS_PAD=" "
     PS_CLOSE=" "
@@ -30,19 +31,23 @@ else
     GREEN="\[\033[01;32m\]"
     ORANGE="\[\033[01;33m\]"
     BLUE="\[\033[01;34m\]"
-    YELLOW="\[\033[0;33m\]"
     COL_RESET="\[\033[0m\]"
     PS_PAD="["
     PS_CLOSE="]"
 fi
 
-function parse_git_branch {
-  ref=$(git symbolic-ref --short HEAD 2> /dev/null)
-  PS_GIT=${ref:+"$PS_PAD${ref}$PS_CLOSE"}
+function prompt_command {
+    if [ $? -ne 0 ]; then
+	PS_EXITSTATUS="$RED${PS_PAD}error$PS_CLOSE"
+    else
+        PS_EXITSTATUS=""
+    fi
+    ref=$(git symbolic-ref --short HEAD 2> /dev/null)
+    PS_GIT=${ref:+"$PS_PAD${ref}$PS_CLOSE"}
 }
-PROMPT_COMMAND=parse_git_branch
+PROMPT_COMMAND=prompt_command
 
 PS_USERHOST="$BLUE$PS_PAD\u@\h$PS_CLOSE"
 PS_TIME="$ORANGE$PS_PAD\t$PS_CLOSE"
 PS_DIR="$GREEN$PS_PAD\w$PS_CLOSE"
-PS1="$WHITE$PS_USERHOST$PS_TIME${RED}"\$PS_GIT"$COL_RESET\n$WHITE$PS_DIR⏵$COL_RESET "
+PS1="$WHITE\$PS_EXITSTATUS$PS_USERHOST$PS_TIME${RED}\$PS_GIT$COL_RESET\n$PS_DIR\$$COL_RESET "
