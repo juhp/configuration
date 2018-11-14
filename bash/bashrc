@@ -10,44 +10,49 @@ fi
 
 # User specific aliases and functions
 alias ls='ls --color=auto'
-#alias man='LANG=C man'
+alias man='LANG=C man'
 
 #source /usr/share/git-core/contrib/completion/git-prompt.sh
 #PS1='\[$(tput bold)\]\[$(tput setaf 4)\][\u@\h \w$(__git_ps1 ":%s")]\[$(tput sgr0)\]\\$ '
 
 
-#substract 8 for dark (bg) colours
+# substract/add 8 for dark/light (bg) colours
 if [ "$TERM" != "dumb" ]; then
-    WHITE="\[$(tput setaf 15)\]"
-    RED="$(tput setab 9)"
-    GREEN="\[$(tput setab 10)\]"
+    WHITE="$(tput setaf 15)"
+    RED="$(tput setab 1)"
+    GREEN="$(tput setab 10)"
     ORANGE="$(tput setab 3)"
     BLUE="$(tput setab 12)"
-    COL_RESET="\[$(tput sgr0)\]"
+    CYAN="$(tput setab 6)"
+    COL_RESET="$(tput sgr0)"
     PS_PAD=" "
     PS_CLOSE=" "
 else
-    RED="\[\033[0;31m\]"
-    GREEN="\[\033[01;32m\]"
-    ORANGE="\[\033[01;33m\]"
-    BLUE="\[\033[01;34m\]"
-    COL_RESET="\[\033[0m\]"
+    RED="\033[0;31m"
+    GREEN="\033[01;32m"
+    ORANGE="\033[01;33m"
+    BLUE="\033[01;34m"
+    CYAN="\033[01;36m"
+    COL_RESET="\033[0m"
     PS_PAD="["
     PS_CLOSE="]"
 fi
 
+PS_USERHOST="$BLUE$PS_PAD\u@\h$PS_CLOSE"
+PS_TIME="$ORANGE$PS_PAD\t$PS_CLOSE"
+
 function prompt_command {
-    if [ $? -ne 0 ]; then
-	PS_EXITSTATUS="$RED${PS_PAD}error$PS_CLOSE"
+    status=$?
+    if [ $status -ne 0 ]; then
+	exitstatus="$WHITE$RED${PS_PAD}error $status$PS_CLOSE$COL_RESET\n"
     else
-        PS_EXITSTATUS=""
+        exitstatus=""
     fi
     ref=$(git symbolic-ref --short HEAD 2> /dev/null)
-    PS_GIT=${ref:+"$PS_PAD${ref}$PS_CLOSE"}
+    branch=${ref:+$CYAN$PS_PAD$ref$PS_CLOSE}
+
+    echo "${exitstatus@E}$WHITE${PS_USERHOST@P}${PS_TIME@P}${branch}$COL_RESET"
 }
 PROMPT_COMMAND=prompt_command
 
-PS_USERHOST="$BLUE$PS_PAD\u@\h$PS_CLOSE"
-PS_TIME="$ORANGE$PS_PAD\t$PS_CLOSE"
-PS_DIR="$GREEN$PS_PAD\w$PS_CLOSE"
-PS1="$WHITE\$PS_EXITSTATUS$PS_USERHOST$PS_TIME${RED}\$PS_GIT$COL_RESET\n$PS_DIR\$$COL_RESET "
+PS1="\[$GREEN\]$PS_PAD\w$PS_CLOSE\$\[$COL_RESET\] "
