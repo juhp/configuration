@@ -1,0 +1,20 @@
+#!/bin/sh
+
+for i in {30..37} {90..97}; do
+    echo -e -n "\e[${i}m  fg$i"
+done
+echo
+echo -en "\e[40m"
+for i in {30..37} {90..97}; do
+    echo -e -n "\e[${i}m  fg$i"
+done
+echo
+
+for i in {40..47}; do
+    echo -e -n "\e[${i}m  bg$i"
+done
+for i in {100..107}; do
+    echo -e -n "\e[${i}m bg$i"
+done
+
+echo
