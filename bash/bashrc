@@ -15,18 +15,20 @@ alias man='LANG=C man'
 # add 60 for light colours
 RED="\e[41m"
 ORANGE="\e[43m"
-BLUE="\e[44m"
 PURPLE="\e[45m"
 if [ "$TERM" != "dumb" ]; then
-    GREEN="\e[42m"
+    GREEN="\e[102m"
+    YELLOW="\e[103m"
     WHITE="\e[97m"
+    BLUE="\e[104m"
 else
     WHITE="\e[37m"
+    BLUE="\e[44m"
 fi
 COL_RESET="\e[0m"
 
 PS_USERHOST="$BLUE \u@\h "
-PS_TIME="$ORANGE \t "
+PS_TIME="$ORANGE \D{%a} \t "
 
 function prompt_command {
     status=$?
