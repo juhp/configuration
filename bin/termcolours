@@ -1,20 +1,27 @@
 #!/bin/sh
 
-for i in {30..37} {90..97}; do
-    echo -e -n "\e[${i}m  fg$i"
-done
-echo
-echo -en "\e[40m"
-for i in {30..37} {90..97}; do
-    echo -e -n "\e[${i}m  fg$i"
-done
-echo
+print_range () {
+    for i in $*; do
+        if [ $i -lt 100 ]; then spc=" "; else spc=""; fi
+        echo -e -n "\e[${i}m $spc$i"
+    done
+    echo -e "\e[0m"
+}
 
-for i in {40..47}; do
-    echo -e -n "\e[${i}m  bg$i"
-done
-for i in {100..107}; do
-    echo -e -n "\e[${i}m bg$i"
-done
-
+echo -en "\e[107m"
+print_range {30..37}
+if [ "$TERM" != "dumb" ]; then
+echo -en "\e[107m\e[2m"
+print_range {30..37}
+echo -en "\e[1m\e[40m"
+print_range {90..97}
+echo -en "\e[1m\e[40m\e[2m"
+print_range {90..97}
 echo
+fi
+echo -en "\e[97m"
+print_range {40..47}
+if [ "$TERM" != "dumb" ]; then
+echo -en "\e[30m"
+print_range {100..107}
+fi
