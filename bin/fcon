@@ -1,0 +1,15 @@
+#!/bin/sh
+
+case $1 in
+    rawhide) ;;
+    [1-9][0-9]) ;;
+    *) echo "Usage $0 [RELVER|rawhide] CMD ..."
+       exit 1
+       ;;
+esac
+
+RELEASE=$1
+shift
+
+#podman pull fedora:$RELEASE
+podman run --rm -it fedora:$RELEASE "$@"
