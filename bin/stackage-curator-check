@@ -3,12 +3,11 @@
 BUILD=no
 
 if [ "$BUILD" = "yes" ]; then
-#    pushd ~/haskell/stackage-curator
-#    git pull
-   stack-nightly install stackage-curator
-#    popd
-#:
+   pushd ~/github/stackage-curator
+   git pull
+   stack --resolver=lts-12 install stackage-curator
+   popd
 fi
 
 stack update
-stack --resolver lts-8 exec /home/petersen/.local/bin/stackage-curator check
+stack-nightly exec /home/petersen/.local/bin/stackage-curator check
