@@ -2,7 +2,7 @@
 
 # Source global definitions
 if [ -f /etc/bashrc ]; then
-	. /etc/bashrc
+    . /etc/bashrc
 fi
 
 # Uncomment the following line if you don't like systemctl's auto-paging feature:
@@ -22,26 +22,41 @@ if [ "$TERM" != "dumb" ]; then
     WHITE="\e[97m"
     BLUE="\e[104m"
 else
-    WHITE="\e[37m"
-    BLUE="\e[44m"
+#    WHITE="\e[37m"
+#    BLUE="\e[44m"
+:
 fi
 COL_RESET="\e[0m"
 
-PS_USERHOST="$BLUE \u@\h "
 PS_TIME="$ORANGE \D{%a} \t "
 
 function prompt_command {
     status=$?
     if [ $status -ne 0 ]; then
-	exitstatus="$WHITE$RED error $status $COL_RESET\n"
+        exitstatus="$WHITE$RED error $status $COL_RESET\n"
     else
         exitstatus=""
     fi
     ref=$(git symbolic-ref --short HEAD 2> /dev/null)
     branch=${ref:+$PURPLE $ref }
 
-    echo -e "${exitstatus}$WHITE${PS_USERHOST@P}${PS_TIME@P}${branch}${COL_RESET}"
+    if [ "$USER" = "petersen" ]; then
+        username=""
+    else
+        username="\u"
+    fi
+    if [ "$HOSTNAME" = "localhost.localdomain" ]; then
+        hostname=""
+    else
+        hostname="@\h"
+    fi
+    if [ -n "${username}${hostname}" ]; then
+        userhost="${GREEN} ${username@P}${hostname@P} "
+    else
+        userhost=""
+    fi
+    echo -e "${exitstatus}$WHITE${userhost}${PS_TIME@P}${branch}${COL_RESET}"
 }
 PROMPT_COMMAND=prompt_command
 
-PS1="\[$GREEN\] \w \$\[$COL_RESET\] "
+PS1="\[$BLUE$WHITE\] \w \$\[$COL_RESET\] "
