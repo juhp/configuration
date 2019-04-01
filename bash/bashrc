@@ -47,6 +47,8 @@ function prompt_command {
     fi
     if [ "$HOSTNAME" = "localhost.localdomain" ]; then
         hostname=""
+    elif [ -n "$DISTTAG" ]; then
+        hostname="$DISTTAG"
     else
         hostname="@\h"
     fi
