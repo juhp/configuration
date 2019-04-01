@@ -1,0 +1,6 @@
+#!/bin/sh
+
+RELEASE=${1:-30}
+export HISTFILE="${HOME}/.bash_history.tb${RELEASE}"
+
+LANG=C.utf8 toolbox enter --release $RELEASE
