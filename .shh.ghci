@@ -1,0 +1,7 @@
+:set prompt "Shh> "
+:set -XTemplateHaskell
+import Shh
+import System.Directory
+import System.FilePath.Glob
+$(loadEnv SearchPath);
+initInteractive

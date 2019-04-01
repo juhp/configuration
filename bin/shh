@@ -1,0 +1,3 @@
+#!/bin/sh
+
+ghci -v0 -ghci-script ~/.shh.ghci -package shh -package Glob
