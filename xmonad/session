@@ -1,0 +1,12 @@
+#!/bin/sh
+
+/usr/libexec/gnome-settings-daemon &
+taffybar &
+#tpfc
+nm-applet &
+abrt-applet &
+seapplet &
+gnome-sound-applet &
+gnome-power-manager &
+gnome-screensaver &
+/usr/libexec/polkit-gnome-authentication-agent-1 &
