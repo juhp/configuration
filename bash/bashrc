@@ -14,31 +14,28 @@ alias man='LANG=C man'
 
 # add 60 for light colours
 RED="\e[41m"
-ORANGE="\e[43m"
+GREEN="\e[42m"
+YELLOW="\e[43m"
+BLUE="\e[44m"
 PURPLE="\e[45m"
 if [ "$TERM" != "dumb" ]; then
-    GREEN="\e[102m"
-    YELLOW="\e[103m"
     WHITE="\e[97m"
-    BLUE="\e[104m"
 else
-#    WHITE="\e[37m"
-#    BLUE="\e[44m"
-:
+    WHITE="\e[37m"
 fi
+REVERSEVIDEO="\e[7m"
 COL_RESET="\e[0m"
 
-PS_TIME="$ORANGE \D{%a} \t "
+PS_TIME=" \D{%a} \t "
 
 function prompt_command {
-    status=$?
-    if [ $status -ne 0 ]; then
-        exitstatus="$WHITE$RED error $status $COL_RESET\n"
+    if [ $? -ne 0 ]; then
+        exitstatus="$WHITE$RED error $? $COL_RESET"
     else
         exitstatus=""
     fi
     ref=$(git symbolic-ref --short HEAD 2> /dev/null)
-    branch=${ref:+$PURPLE $ref }
+    branch=${ref:+\\[$PURPLE\\]:$ref}
 
     if [ "$USER" = "petersen" ]; then
         username=""
@@ -53,12 +50,12 @@ function prompt_command {
         hostname="@\h"
     fi
     if [ -n "${username}${hostname}" ]; then
-        userhost="${GREEN} ${username@P}${hostname@P} "
+        userhost=" ${username}${hostname} "
     else
         userhost=""
     fi
-    echo -e "${exitstatus}$WHITE${userhost}${PS_TIME@P}${branch}${COL_RESET}"
+    echo -e "$REVERSEVIDEO${PS_TIME@P}$COL_RESET${exitstatus}$WHITE$COL_RESET"
 }
 PROMPT_COMMAND=prompt_command
 
-PS1="\[$BLUE$WHITE\] \w \$\[$COL_RESET\] "
+PS1="\[$WHITE$YELLOW\]\${userhost}\[$BLUE\] \w\${branch@P} \[$COL_RESET\]\$ "
