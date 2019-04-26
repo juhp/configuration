@@ -1,6 +1,6 @@
 #!/bin/sh
 
-CFGDIR=~/configuration
+CFGDIR=~/github/configuration
 
 
 for i in init custom; do

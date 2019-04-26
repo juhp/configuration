@@ -59,9 +59,6 @@
 ;;; toolbar
 (tool-bar-mode 0)
 
-;; ja font
-(set-fontset-font t 'japanese-jisx0208 "VL ゴシック 11")
-
 ;;; personal lisp dir
 (add-to-list 'load-path "~/.emacs.d/lisp")
 
@@ -136,9 +133,10 @@
 (ffap-bindings)
 
 ;;; iswitchb
-;(iswitchb-mode)
 (require 'iswitchb)
-(iswitchb-default-keybindings)
+(iswitchb-mode)
+(setq read-buffer-function 'iswitchb-read-buffer)
+;(iswitchb-default-keybindings)
 (defalias 'read-buffer 'iswitchb-read-buffer)
 
 ;;; w3m
