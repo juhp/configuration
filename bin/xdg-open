@@ -1,0 +1,3 @@
+#!/bin/sh
+
+${TOOLBOX_CONTAINER:+flatpak-spawn --host} /usr/bin/xdg-open $*
