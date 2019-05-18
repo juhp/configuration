@@ -8,20 +8,32 @@ print_range () {
     echo -e "\e[0m"
 }
 
-echo -en "\e[107m"
-print_range {30..37}
-if [ "$TERM" != "dumb" ]; then
-echo -en "\e[107m\e[2m"
-print_range {30..37}
-echo -en "\e[1m\e[40m"
-print_range {90..97}
-echo -en "\e[1m\e[40m\e[2m"
-print_range {90..97}
-echo
+colours=$(tput colors)
+
+if [ $colours -gt 8 ]; then
+    echo -en "\e[107m"
+else
+    echo -en "\e[47m"
 fi
+print_range {30..37}
+echo -en "\e[40m"
+print_range {30..37}
+
 echo -en "\e[97m"
 print_range {40..47}
-if [ "$TERM" != "dumb" ]; then
 echo -en "\e[30m"
-print_range {100..107}
+print_range {40..47}
+
+
+if [ $colours -gt 8 ]; then
+    echo
+    echo -en "\e[107m\e[2m"
+    print_range {30..37}
+    echo -en "\e[1m\e[40m"
+    print_range {90..97}
+    echo -en "\e[1m\e[40m\e[2m"
+    print_range {90..97}
+    echo
+    echo -en "\e[30m"
+    print_range {100..107}
 fi
