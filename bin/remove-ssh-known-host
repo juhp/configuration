@@ -1,0 +1,11 @@
+#!/bin/sh
+
+KNOWN=~/.ssh/known_hosts
+
+grep $1 $KNOWN
+
+if [ "$(grep $1 $KNOWN | wc -l)" -ne 1 ]; then
+  exit 1
+fi
+
+sed -i -e "/^$1 /d" $KNOWN
