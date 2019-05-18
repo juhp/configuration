@@ -1,39 +1,61 @@
-#!/bin/sh
+#!/bin/bash
 
-print_range () {
+printcode () {
+    let "spcs= 4 - ${#1}"
+    case $spcs in
+        2) spaces='  ' ;;
+        1) spaces=' ' ;;
+        3) spaces='   ' ;;
+        4) spaces='    ' ;;
+        0) spaces='' ;;
+    esac
+    echo -e -n "\e[${1}m${spaces}$1"
+}
+
+sequence () {
+    case ${#} in
+        1) echo -n "        " ;;
+        2) echo -n "    " ;;
+    esac
     for i in $*; do
-        if [ $i -lt 100 ]; then spc=" "; else spc=""; fi
-        echo -e -n "\e[${i}m $spc$i"
+        printcode $i
     done
+}
+
+reset () {
     echo -e "\e[0m"
+}
+
+line () {
+    sequence $*
+    reset
 }
 
 colours=$(tput colors)
 
 if [ $colours -gt 8 ]; then
-    echo -en "\e[107m"
+    sequence "107"
 else
-    echo -en "\e[47m"
+    sequence "47"
 fi
-print_range {30..37}
-echo -en "\e[40m"
-print_range {30..37}
+line {30..37}
+sequence "40"
+line {30..37}
 
-echo -en "\e[97m"
-print_range {40..47}
-echo -en "\e[30m"
-print_range {40..47}
-
+sequence "97"
+line {40..47}
+sequence "30"
+line {40..47}
 
 if [ $colours -gt 8 ]; then
     echo
-    echo -en "\e[107m\e[2m"
-    print_range {30..37}
-    echo -en "\e[1m\e[40m"
-    print_range {90..97}
-    echo -en "\e[1m\e[40m\e[2m"
-    print_range {90..97}
+    sequence "107" "2"
+    line {30..37}
+    sequence "1" "40"
+    line {90..97}
+    sequence "1" "40" "2"
+    line {90..97}
     echo
-    echo -en "\e[30m"
-    print_range {100..107}
+    sequence "30"
+    line {100..107}
 fi
