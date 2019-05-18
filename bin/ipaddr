@@ -1,0 +1,3 @@
+#!/bin/sh
+
+ip -br -4 addr | grep -v ^lo
