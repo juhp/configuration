@@ -2,7 +2,11 @@
 
 # Source global definitions
 if [ -f /etc/bashrc ]; then
-    . /etc/bashrc
+    source /etc/bashrc
+fi
+
+if [ -n "$FGC" ]; then
+export HISTFILE="${HOME}/.bash_history.tb.${FGC}.${TERM}"
 fi
 
 # Uncomment the following line if you don't like systemctl's auto-paging feature:
@@ -19,12 +23,12 @@ GREEN="\e[42m"
 YELLOW="\e[43m"
 BLUE="\e[44m"
 PURPLE="\e[45m"
-if [ "$(tput colors)" -lt "8" ]; then
+if [ "$(tput colors)" -le "8" ]; then
     WHITE="\e[37m"
     BLACK="\e[30m"
 else
     WHITE="\e[97m"
-    BLACK="\e[30m"
+    BLACK="\e[1;30m"
 fi
 REVERSEVIDEO="\e[7m"
 COL_RESET="\e[0m"
@@ -45,21 +49,19 @@ function prompt_command {
     else
         username="\u"
     fi
-    if [ "$HOSTNAME" = "localhost.localdomain" -o "$HOSTNAME" = "toolbox" ]; then
-        hostname=""
-    else
-        hostname="@\h"
-    fi
     if [ -n "$DISTTAG" ]; then
-        hostname="$hostname${hostname:+/}$DISTTAG"
+        hostname="$DISTTAG"
     fi
-    if [ -n "${username}${hostname}" ]; then
+    if [ -z "$hostname" -a "$HOSTNAME" != "localhost.localdomain" ]; then
+        hostname="\h"
+    fi
+    if [ -n "${username}" -a -n "${hostname}" ]; then
+        userhost=" ${username}@${hostname} "
+    elif [ -n "${username}${hostname}" ]; then
         userhost=" ${username}${hostname} "
-    else
-        userhost=""
     fi
     if [ "$TERM" = "xterm-256color" ]; then
-        title="\e]0;${userhost}${userhost:+:}\w/\a"
+        title="\e]0;${userhost}${userhost:+:}\w\a"
     fi
     echo -e "$REVERSEVIDEO${PS_TIME@P}$COL_RESET${exitstatus}$WHITE$COL_RESET"
 }
