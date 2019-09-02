@@ -68,3 +68,5 @@ function prompt_command {
 PROMPT_COMMAND=prompt_command
 
 PS1="\[\${title@P}$BLACK$YELLOW\]\${userhost@P}\[$WHITE$BLUE\] \w\${branch@P} \[$COL_RESET\]\$ "
+
+export PS0="$REVERSEVIDEO \D{%a} \t $COL_RESET\n"
