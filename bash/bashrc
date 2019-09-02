@@ -41,7 +41,8 @@ function prompt_command {
     else
         exitstatus=""
     fi
-    ref=$(git symbolic-ref --short HEAD 2> /dev/null)
+
+    ref=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
     branch=${ref:+\\[$PURPLE\\]:$ref}
 
     if [ "$USER" = "petersen" ]; then
