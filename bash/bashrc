@@ -51,7 +51,7 @@ function prompt_command {
         username="\u"
     fi
     if [ -n "$DISTTAG" ]; then
-        hostname="$DISTTAG"
+        hostname="⬢$DISTTAG"
     fi
     if [ -z "$hostname" -a "$HOSTNAME" != "localhost.localdomain" ]; then
         hostname="\h"
