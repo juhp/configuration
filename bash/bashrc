@@ -62,7 +62,7 @@ function prompt_command {
         userhost=" ${username}${hostname} "
     fi
     if [ "$TERM" = "xterm-256color" ]; then
-        title="\e]0;${userhost}${userhost:+:}\w/\a"
+        title="\e]0;${userhost}${userhost:+:}\w\a"
     fi
     echo -e "$REVERSEVIDEO${PS_TIME@P}$COL_RESET${exitstatus}$WHITE$COL_RESET"
 }
