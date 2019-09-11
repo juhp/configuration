@@ -37,10 +37,12 @@ COL_RESET="\e[0m"
 PS_TIME=" \D{%a} \t "
 
 function prompt_command {
-    if [ $? -ne 0 ]; then
+    if [ -z "$errorshown" -a $? -ne 0 ]; then
         exitstatus="$WHITE$RED error $? $COL_RESET"
+        errorshown=yes
     else
         exitstatus=""
+        unset errorshown
     fi
 
     ref=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
