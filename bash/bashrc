@@ -31,6 +31,7 @@ else
     BLACK="\e[1;30m"
 fi
 REVERSEVIDEO="\e[7m"
+REVERSEVIDEODIM="\e[7;2m"
 COL_RESET="\e[0m"
 
 PS_TIME=" \D{%a} \t "
@@ -70,4 +71,4 @@ PROMPT_COMMAND=prompt_command
 
 PS1="\[$WHITE$BLUE\] \w\${branch@P} \[$COL_RESET\]\$ "
 
-export PS0="$REVERSEVIDEO \D{%a} \t $COL_RESET\n"
+export PS0="$REVERSEVIDEODIM \D{%a} \t $COL_RESET\n"
