@@ -1,4 +1,8 @@
+#!/usr/bin/bash
+
 # .bashrc
+
+HOME=$(readlink -e $HOME)
 
 # Source global definitions
 if [ -f /etc/bashrc ]; then
@@ -8,6 +12,11 @@ fi
 if [ -n "$FGC" ]; then
 export HISTFILE="${HOME}/.bash_history.tb.${FGC}.${TERM}"
 fi
+
+# exit if non-interactive
+[ ! -t 0 ] && return 0
+
+############### below is for interactive shell only ###########################
 
 # Uncomment the following line if you don't like systemctl's auto-paging feature:
 # export SYSTEMD_PAGER=
@@ -19,11 +28,11 @@ alias man='LANG=C man'
 # background colours
 # add 60 for light colours
 RED="\e[41m"
-GREEN="\e[42m"
+#GREEN="\e[42m"
 YELLOW="\e[43m"
 BLUE="\e[44m"
 PURPLE="\e[45m"
-if [ "$(tput colors)" -le "8" ]; then
+if [ -x "/usr/bin/tput" ] && [ "$(tput colors)" -le "8" ]; then
     WHITE="\e[37m"
     BLACK="\e[30m"
 else
@@ -45,17 +54,17 @@ function prompt_command {
         unset errorshown
     fi
 
-    ref=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
+    ref=$(/usr/bin/git rev-parse --abbrev-ref HEAD 2> /dev/null)
     branch=${ref:+\\[$PURPLE\\]:$ref}
 
-    if [ "$USER" = "petersen" ]; then
+    if [ "$USER" = "petersen" -o -z "$USER" ]; then
         username=""
     else
         username="\u"
     fi
-    if [ -n "$DISTTAG" ]; then
-        hostname="⬢$DISTTAG"
-    elif [ "$HOSTNAME" = "toolbox" ]; then
+    if [ -n "$container" -a -n "$ID$VERSION_ID" ]; then
+        hostname="⬢$ID$VERSION_ID"
+    elif [ "$HOSTNAME" = "toolbox" -o -n "$TOOLBOX_PATH" ]; then
         hostname="⬢\h"
     fi
     if [ -n "${username}" -a -n "${hostname}" ]; then
@@ -66,10 +75,21 @@ function prompt_command {
     if [ "$TERM" = "xterm-256color" ]; then
         title="\e]0;${userhost}${userhost:+:}\w\a"
     fi
-    echo -e "$REVERSEVIDEO${PS_TIME@P}${title@P}$COL_RESET${exitstatus}$WHITE$COL_RESET"
+    case $BASH_VERSION in
+        4.2*)
+            echo -e "$REVERSEVIDEO $(date +"%a %T") $COL_RESET${exitstatus}$WHITE$COL_RESET" ;;
+        *)
+            echo -e "$REVERSEVIDEO${PS_TIME@P}${title@P}$COL_RESET${exitstatus}$WHITE$COL_RESET" ;;
+    esac
 }
+
 PROMPT_COMMAND=prompt_command
 
-PS1="\[$BLACK$YELLOW\]\${userhost@P}\[$WHITE$BLUE\] \w\${branch@P} \[$COL_RESET\]\$ "
+    case $BASH_VERSION in
+        4.2*)
+            PS1="\[$BLACK$YELLOW\]\${userhost}\[$WHITE$BLUE\] \w\${branch} \[$COL_RESET\]\$ " ;;
+        *)
+            PS1="\[$BLACK$YELLOW\]\${userhost}\[$WHITE$BLUE\] \w\${branch@P} \[$COL_RESET\]\$ "
+    esac
 
 export PS0="$REVERSEVIDEODIM \D{%a} \t $COL_RESET\n"
