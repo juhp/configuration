@@ -21,6 +21,8 @@ fi
 # Uncomment the following line if you don't like systemctl's auto-paging feature:
 # export SYSTEMD_PAGER=
 
+set +h
+
 # User specific aliases and functions
 alias ls='ls --color=auto'
 alias man='LANG=C man'
@@ -47,7 +49,7 @@ PS_TIME=" \D{%a} \t "
 
 function prompt_command {
     if [ -z "$errorshown" -a $? -ne 0 ]; then
-        exitstatus="$WHITE$RED error $? $COL_RESET"
+        exitstatus="$WHITE$RED error $COL_RESET"
         errorshown=yes
     else
         exitstatus=""
@@ -62,10 +64,13 @@ function prompt_command {
     else
         username="\u"
     fi
+    if [ "$TERM" = "xterm-256color" ]; then
+        hexspace=" "
+    fi
     if [ -n "$container" -a -n "$ID$VERSION_ID" ]; then
-        hostname="⬢$ID$VERSION_ID"
+        hostname="⬢$hexspace$ID$VERSION_ID"
     elif [ "$HOSTNAME" = "toolbox" -o -n "$TOOLBOX_PATH" ]; then
-        hostname="⬢\h"
+        hostname="⬢$hexspace\h"
     fi
     if [ -n "${username}" -a -n "${hostname}" ]; then
         userhost=" ${username}@${hostname} "
@@ -77,9 +82,9 @@ function prompt_command {
     fi
     case $BASH_VERSION in
         4.2*)
-            echo -e "$REVERSEVIDEO $(date +"%a %T") $COL_RESET${exitstatus}$WHITE$COL_RESET" ;;
+            echo -e "$REVERSEVIDEODIM $(date +"%a %T") $COL_RESET${exitstatus}$WHITE$COL_RESET" ;;
         *)
-            echo -e "$REVERSEVIDEO${PS_TIME@P}${title@P}$COL_RESET${exitstatus}$WHITE$COL_RESET" ;;
+            echo -e "$REVERSEVIDEODIM${PS_TIME@P}${title@P}$COL_RESET${exitstatus}$WHITE$COL_RESET" ;;
     esac
 }
 
@@ -92,4 +97,4 @@ PROMPT_COMMAND=prompt_command
             PS1="\[$BLACK$YELLOW\]\${userhost}\[$WHITE$BLUE\] \w\${branch@P} \[$COL_RESET\]\$ "
     esac
 
-export PS0="$REVERSEVIDEODIM \D{%a} \t $COL_RESET\n"
+export PS0="$REVERSEVIDEO \D{%a} \t $COL_RESET\n"
