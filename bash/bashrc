@@ -9,14 +9,19 @@ if [ -f /etc/bashrc ]; then
     source /etc/bashrc
 fi
 
-if [ -n "$FGC" ]; then
-export HISTFILE="${HOME}/.bash_history.tb.${FGC}.${TERM}"
-fi
-
 # exit if non-interactive
 [ ! -t 0 ] && return 0
 
 ############### below is for interactive shell only ###########################
+
+# don't export: eg breaks dotnet
+if [ "$HOSTNAME" = "toolbox" -o -n "$VERSION" ]; then
+    export -n VERSION
+fi
+
+if [ -n "$container" ]; then
+export HISTFILE="${HOME}/.bash_history.tb.${ID}${VERSION_ID}.${TERM}"
+fi
 
 # Uncomment the following line if you don't like systemctl's auto-paging feature:
 # export SYSTEMD_PAGER=
@@ -45,16 +50,18 @@ REVERSEVIDEO="\e[7m"
 REVERSEVIDEODIM="\e[7;2m"
 COL_RESET="\e[0m"
 
-PS_TIME=" \D{%a} \t "
+PS_TIME=" \D{%a} \t «"
+
+eval $(grep "\(VERSION_ID\|VARIANT_ID\)" /etc/os-release)
 
 function prompt_command {
-    if [ -z "$errorshown" -a $? -ne 0 ]; then
-        exitstatus="$WHITE$RED error $COL_RESET"
-        errorshown=yes
-    else
-        exitstatus=""
-        unset errorshown
-    fi
+    # if [ -z "$errorshown" -a $? -ne 0 ]; then
+    #     exitstatus="$WHITE$RED error $COL_RESET"
+    #     errorshown=yes
+    # else
+    #     exitstatus=""
+    #     unset errorshown
+    # fi
 
     ref=$(/usr/bin/git rev-parse --abbrev-ref HEAD 2> /dev/null)
     branch=${ref:+\\[$PURPLE\\]:$ref}
@@ -67,10 +74,14 @@ function prompt_command {
     if [ "$TERM" = "xterm-256color" ]; then
         hexspace=" "
     fi
-    if [ -n "$container" -a -n "$ID$VERSION_ID" ]; then
+    if [ -n "$container" -a "$VARIANT_ID" = "eln" ]; then
+        hostname="⬢$hexspace$VARIANT_ID$VERSION_ID"
+    elif [ -n "$container" -a -n "$ID$VERSION_ID" ]; then
         hostname="⬢$hexspace$ID$VERSION_ID"
     elif [ "$HOSTNAME" = "toolbox" -o -n "$TOOLBOX_PATH" ]; then
         hostname="⬢$hexspace\h"
+    elif [ "$HOSTNAME" = "tlbx" ]; then
+        hostname="⬢${hexspace}tlbx"
     fi
     if [ -n "${username}" -a -n "${hostname}" ]; then
         userhost=" ${username}@${hostname} "
@@ -90,11 +101,15 @@ function prompt_command {
 
 PROMPT_COMMAND=prompt_command
 
-    case $BASH_VERSION in
-        4.2*)
-            PS1="\[$BLACK$YELLOW\]\${userhost}\[$WHITE$BLUE\] \w\${branch} \[$COL_RESET\]\$ " ;;
-        *)
-            PS1="\[$BLACK$YELLOW\]\${userhost}\[$WHITE$BLUE\] \w\${branch@P} \[$COL_RESET\]\$ "
-    esac
+case $BASH_VERSION in
+    4.2*)
+        PS1="\[$WHITE$BLUE\]\${userhost}\[$WHITE$PURPLE\] \w\${branch} \[$COL_RESET\]\$ " ;;
+    *)
+        PS1="\[$WHITE$BLUE\] \w\${branch@P} \[$COL_RESET\]\n\${userhost:+\[$BLACK$YELLOW\]\${userhost}}\[$COL_RESET\]\$ "
+esac
 
-export PS0="$REVERSEVIDEO \D{%a} \t $COL_RESET\n"
+export PS0="$REVERSEVIDEODIM \D{%a} \t »$COL_RESET\n"
+
+if [ -x "/usr/bin/zoxide" ]; then
+    eval "$(zoxide init bash)"
+fi

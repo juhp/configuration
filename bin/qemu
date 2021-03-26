@@ -1,7 +1,7 @@
 #!/bin/sh
 
-# -vga qxl
+# -vga qxl -display spice-app
 
-CMD="qemu-kvm -m 1536 -usb -localtime -k en-us $*"
+CMD="qemu-kvm -smp 2 -m 2048 -rtc base=localtime -k en-us $*"
 echo $CMD
 $CMD
