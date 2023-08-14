@@ -24,3 +24,5 @@ export NPM_CONFIG_PREFIX=~/.npm-global
 export GIT_PAGER=cat
 
 NAME=${NAME:+Jens Petersen}
+
+export EDITOR=vi
