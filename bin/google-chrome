@@ -1,6 +1,0 @@
-#!/bin/sh
-
-#unset GTK_PATH
-LANG=ja_JP.utf8
-
-exec /usr/bin/google-chrome --auth-server-whitelist="*.redhat.com" "$@"

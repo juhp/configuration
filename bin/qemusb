@@ -1,6 +1,0 @@
-#!/bin/sh
-
-DEV=${1:-/dev/sdb}
-
-sudo ~/bin/qemu -hda ${DEV}
-

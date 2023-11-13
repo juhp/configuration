@@ -12,10 +12,22 @@ done
 #diff -u {$CFGDIR/,~/.}yi/yi.hs
 
 # docker-run google-chrome touchpad-natural-scroll
-for i in diff-branches emacs launch qemu qemulive qemusb yum-repo; do
-    diff -u {$CFGDIR/,~/}bin/$i
+for i in $(ls $CFGDIR/bin); do
+    if [ -f ~/bin/"$i" ]; then
+        diff -u {$CFGDIR/,~/}bin/$i
+        if [ ! -x $CFGDIR/bin/$i ]; then
+            echo "** bin/$i not executable **" >&2
+        fi
+    else
+        echo "no ~/bin/$i" >&2
+    fi
 done
-
+for i in $(ls ~/bin); do
+    if [ ! -f "$CFGDIR/bin/$i" ]; then
+        echo "no bin/$i" >&2
+    fi
+done
+cd ..
 for i in bash_profile bashrc; do
     diff -u {$CFGDIR/bash/,~/.}$i
 done

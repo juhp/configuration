@@ -2,6 +2,6 @@
 
 # -vga qxl -display spice-app
 
-CMD="qemu-kvm -smp 2 -m 2048 -rtc base=localtime -k en-us $*"
+CMD="qemu-kvm -smp 2 -m 2048 -cpu host -rtc base=localtime -k en-us $*"
 echo $CMD
 $CMD

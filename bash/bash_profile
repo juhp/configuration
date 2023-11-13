@@ -7,7 +7,7 @@ fi
 
 # User specific environment and startup programs
 
-export PATH=$HOME/bin:$HOME/.local/bin:$PATH:$HOME/.cabal/bin:$HOME/.cargo/bin
+export PATH=$HOME/bin:$HOME/.local/bin:$PATH:$HOME/.cabal/bin:$HOME/.cargo/bin:$HOME/.local/share/coursier/bin
 
 export PANGO_LANGUAGE=ja
 

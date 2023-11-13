@@ -2,8 +2,8 @@
 
 
 (require 'package)
-(add-to-list 'package-archives
-             '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+;; (add-to-list 'package-archives
+;;              '("melpa-stable" . "https://stable.melpa.org/packages/") t)
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/"))
 
@@ -15,12 +15,13 @@
       frame-title-format "%b - emacs"
       help-window-select t
       inhibit-startup-screen t
+      ispell-dictionary "english" ; needed for C locale
       kill-do-not-save-duplicates t
       kill-ring-max 128
       kill-whole-line t
       save-place-file "~/.emacs.d/saveplaces.el"
       save-place-limit 1000
-      show-trailing-whitespace t
+      ; show-trailing-whitespace t
       show-paren-mode t
       size-indication-mode t
       tar-mode-show-date t
@@ -56,19 +57,21 @@
 
 (global-set-key "\C-xw" 'write-region)
 (global-set-key "\C-cb" 'magit-checkout)
-(global-set-key "\C-ce" 'shell)
+;;(global-set-key "\C-ce" 'shell)
 (global-set-key "\C-cf" 'find-function-other-window)
 (global-set-key "\C-cg" 'magit-status)
 (global-set-key "\C-cj" 'compile)
 (global-set-key "\C-ck" 'find-function-on-key)
 (global-set-key "\C-cl" 'magit-log-current)
 (global-set-key "\C-cq" 'bury-buffer)
-(global-set-key "\C-c0" '(lambda () (interactive) (shell "*shell*")))
-(global-set-key "\C-c1" '(lambda () (interactive) (shell "*shell*<1>")))
-(global-set-key "\C-c2" '(lambda () (interactive) (shell "*shell*<2>")))
-(global-set-key "\C-c3" '(lambda () (interactive) (shell "*shell*<3>")))
-(global-set-key "\C-c4" '(lambda () (interactive) (shell "*shell*<4>")))
-(global-set-key "\C-c5" '(lambda () (interactive) (shell "*shell*<5>")))
+(global-set-key "\C-ct" 'vterm-toggle)
+(global-set-key "\C-cv" 'multi-vterm-project)
+;; (global-set-key "\C-c0" '(lambda () (interactive) (shell "*shell*")))
+;; (global-set-key "\C-c1" '(lambda () (interactive) (shell "*shell*<1>")))
+;; (global-set-key "\C-c2" '(lambda () (interactive) (shell "*shell*<2>")))
+;; (global-set-key "\C-c3" '(lambda () (interactive) (shell "*shell*<3>")))
+;; (global-set-key "\C-c4" '(lambda () (interactive) (shell "*shell*<4>")))
+;; (global-set-key "\C-c5" '(lambda () (interactive) (shell "*shell*<5>")))
 (global-set-key "\C-z" 'isearchb-activate)
 (global-set-key [C-tab] 'mode-line-other-buffer)
 (global-set-key [M-left] 'backward-sexp)
@@ -186,7 +189,9 @@
 (autoload 'ack "ack" nil t)
 
 ;;; whitespace
-(setq-default whitespace-style '(tabs trailing space-before-tab newline indentation empty space-after-tab))
+;; newline causes _ in *compilation*
+(setq-default whitespace-style '(face tabs trailing space-before-tab newline indentation empty space-after-tab tab-mark))
+(setq whitespace-global-modes '(not compilation-mode comint-mode dired-mode vterm-mode))
 (global-whitespace-mode)
 
 ;;; haskell-mode
@@ -298,13 +303,13 @@
 ;;; undo-tree
 (global-undo-tree-mode)
 
-(require 'ansi-color)
-(defun colorize-compilation-buffer ()
-  (when (eq major-mode 'compilation-mode)
-    (ansi-color-process-output nil)
-    (setq-local comint-last-output-start (point-marker))))
-(add-hook 'compilation-filter-hook
-          #'colorize-compilation-buffer)
+;; (require 'ansi-color)
+;; (defun colorize-compilation-buffer ()
+;;   (when (eq major-mode 'compilation-mode)
+;;     (ansi-color-process-output nil)
+;;     (setq-local comint-last-output-start (point-marker))))
+;; (add-hook 'compilation-filter-hook
+;;           #'colorize-compilation-buffer)
 
 ;;; git-gutter
 (global-git-gutter-mode +1)

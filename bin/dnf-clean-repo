@@ -1,5 +1,0 @@
-#!/bin/sh
-
-REPO=$1
-
-dnf clean metadata --disablerepo=\* --enablerepo=$REPO

@@ -19,6 +19,8 @@ if [ "$HOSTNAME" = "toolbox" -o -n "$VERSION" ]; then
     export -n VERSION
 fi
 
+eval $(grep "\(VERSION_ID\|VARIANT_ID\)" /etc/os-release)
+
 if [ -n "$container" ]; then
 export HISTFILE="${HOME}/.bash_history.tb.${ID}${VERSION_ID}.${TERM}"
 fi
@@ -50,9 +52,7 @@ REVERSEVIDEO="\e[7m"
 REVERSEVIDEODIM="\e[7;2m"
 COL_RESET="\e[0m"
 
-PS_TIME=" \D{%a} \t «"
-
-eval $(grep "\(VERSION_ID\|VARIANT_ID\)" /etc/os-release)
+PS_TIME="« \t \D{%a %e日} «"
 
 function prompt_command {
     # if [ -z "$errorshown" -a $? -ne 0 ]; then
@@ -71,22 +71,22 @@ function prompt_command {
     else
         username="\u"
     fi
-    if [ "$TERM" = "xterm-256color" ]; then
+    if [ "$TERM" = "xterm-256color" -a ! "$INSIDE_EMACS" = "vterm" ]; then
         hexspace=" "
     fi
     if [ -n "$container" -a "$VARIANT_ID" = "eln" ]; then
         hostname="⬢$hexspace$VARIANT_ID$VERSION_ID"
-    elif [ -n "$container" -a -n "$ID$VERSION_ID" ]; then
-        hostname="⬢$hexspace$ID$VERSION_ID"
+    elif [ -n "$container" -a -n "$HOSTNAME$VERSION_ID" ]; then
+        hostname="⬢$hexspace$HOSTNAME$VERSION_ID"
     elif [ "$HOSTNAME" = "toolbox" -o -n "$TOOLBOX_PATH" ]; then
         hostname="⬢$hexspace\h"
     elif [ "$HOSTNAME" = "tlbx" ]; then
         hostname="⬢${hexspace}tlbx"
     fi
     if [ -n "${username}" -a -n "${hostname}" ]; then
-        userhost=" ${username}@${hostname} "
+        userhost="${username}@${hostname}"
     elif [ -n "${username}${hostname}" ]; then
-        userhost=" ${username}${hostname} "
+        userhost="${username}${hostname}"
     fi
     if [ "$TERM" = "xterm-256color" ]; then
         title="\e]0;${userhost}${userhost:+:}\w\a"
@@ -101,14 +101,34 @@ function prompt_command {
 
 PROMPT_COMMAND=prompt_command
 
+vterm_printf(){
+    if [ -n "$TMUX" ] && ([ "${TERM%%-*}" = "tmux" ] || [ "${TERM%%-*}" = "screen" ] ); then
+        # Tell tmux to pass the escape sequences through
+        printf "\ePtmux;\e\e]%s\007\e\\" "$1"
+    elif [ "${TERM%%-*}" = "screen" ]; then
+        # GNU screen (screen, screen-256color, screen-256color-bce)
+        printf "\eP\e]%s\007\e\\" "$1"
+    else
+        printf "\e]%s\e\\" "$1"
+    fi
+}
+
+# for prompt and directory tracking
+# was "51;A$(whoami)@$(hostname):$(pwd)"
+vterm_prompt_end(){
+if [ "$INSIDE_EMACS" = "vterm" ]; then
+    vterm_printf "51;A$(pwd)"
+fi
+}
+
 case $BASH_VERSION in
     4.2*)
         PS1="\[$WHITE$BLUE\]\${userhost}\[$WHITE$PURPLE\] \w\${branch} \[$COL_RESET\]\$ " ;;
     *)
-        PS1="\[$WHITE$BLUE\] \w\${branch@P} \[$COL_RESET\]\n\${userhost:+\[$BLACK$YELLOW\]\${userhost}}\[$COL_RESET\]\$ "
+        PS1="\[$WHITE$BLUE\]\w\${branch@P}\[$COL_RESET\]\n\${userhost:+\[$BLACK$YELLOW\]\${userhost}}\$\[$COL_RESET\] "'\[$(vterm_prompt_end)\]'
 esac
 
-export PS0="$REVERSEVIDEODIM \D{%a} \t »$COL_RESET\n"
+export PS0="$REVERSEVIDEODIM» \t \D{%a %e日} »$COL_RESET\n"
 
 if [ -x "/usr/bin/zoxide" ]; then
     eval "$(zoxide init bash)"
