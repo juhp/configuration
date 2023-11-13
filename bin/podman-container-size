@@ -1,0 +1,2 @@
+#!/bin/sh
+podman container inspect -s -f "{{.SizeRw}}" $*

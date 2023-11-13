@@ -1,0 +1,60 @@
+#!/bin/sh
+
+TOOLBOX_PROG=/usr/bin/toolbox
+#TOOLBOX_PROG=$HOME/src/toolbox/toolbox
+#DISTROBOX_PROG=$HOME/src/distrobox/distrobox
+DISTROBOX_PROG=/usr/bin/distrobox
+
+if [ $# -eq 0 ]; then
+    ARG=40
+else
+    ARG=$1
+    shift
+fi
+
+if [ -z "$*" ]; then
+    CMD=enter
+else
+    CMD=run
+fi
+
+case $ARG in
+    35) CONTAINER=fedora-toolbox-35 ;;
+    36) CONTAINER=fedora-toolbox-36 ;;
+    37) CONTAINER=fedora-toolbox-37 ;;
+    38) CONTAINER=fedora-toolbox-38 ;;
+    39) CONTAINER=fedora-toolbox-39.20230814 ;;
+    40) CONTAINER=fedora-toolbox-40 ;;
+    c8) DISTROBOX=centos-stream8 ;;
+    c9) DISTROBOX=centos9-distrobox ;;
+    el7) DISTROBOX=rhel7-distrobox;;
+    el8) CONTAINER=rhel-toolbox-8.8;;
+    el9) DISTROBOX=rhel-toolbox-9.2;;
+    eln) DISTROBOX=eln-distrobox;;
+    alpine) DISTROBOX=alpine;;
+    archlinux) DISTROBOX=archlinux;;
+    debian) DISTROBOX=debian-distrobox;;
+    tumbleweed) DISTROBOX=tumbleweed-toolbox;;
+    ubuntu) DISTROBOX=ubuntu-distrobox;;
+    *-distrobox*) DISTROBOX=$ARG ;;
+    *-toolbox*) CONTAINER=$ARG ;;
+    *) DISTROBOX=$ARG-distrobox ;;
+esac
+
+if [ -n "$DISTROBOX" ]; then
+    TOOLBOX=$DISTROBOX_PROG
+    CNTOPT=name
+    CONTAINER=$DISTROBOX
+    echo $DISTROBOX
+    if ! podman ps -a --format="{{.Names}}" | grep -q ^$DISTROBOX; then
+        echo "not found"
+        exit 1
+    fi
+else
+    TOOLBOX=$TOOLBOX_PROG
+    CNTOPT=container
+fi
+
+LANG=C.utf8
+
+$TOOLBOX $CMD ${RELEASE:+--release $RELEASE}${CONTAINER:+--$CNTOPT $CONTAINER} $* || echo "$TOOLBOX $CMD ${RELEASE:+--release $RELEASE}${CONTAINER:+--$CNTOPT $CONTAINER} $*"

@@ -1,0 +1,3 @@
+#!/bin/sh
+
+echo "If you really want to poweroff run: '/usr/sbin/poweroff' !"

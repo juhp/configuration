@@ -1,0 +1,6 @@
+#!/bin/sh
+
+#OSTREEPIN=$HOME/.cargo/bin/ostree-pin
+OSTREEPIN=$HOME/.local/bin/ostree-pin
+
+sudo $OSTREEPIN $*

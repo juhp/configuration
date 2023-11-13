@@ -1,0 +1,3 @@
+#!/bin/sh
+
+rpm --eval '%{lua: print(rpm.vercmp("$1", "$2"))}'

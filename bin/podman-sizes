@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# {{.ImageID}}
+podman ps -s --format "{{.Size}}  {{.Names}}  {{.ID}}  {{.Image}}" --sort=size $*
