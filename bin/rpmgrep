@@ -1,0 +1,3 @@
+#!/bin/sh
+
+rpm -ql $2 | xargs grep -d skip $1

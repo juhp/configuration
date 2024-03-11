@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# from https://github.com/github/git-sizer/issues/60
+
+git rev-list --all | xargs -rL1 git ls-tree -r --long | sort -uk3 | sort -rnk4

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+cd /sys/class/thermal/
+cat thermal_zone0/temp thermal_zone1/temp thermal_zone2/temp thermal_zone3/temp thermal_zone4/temp

@@ -1,0 +1,5 @@
+#!/bin/sh
+
+for p in $(pgrep ^fbrnch); do
+ls -l /proc/$p/cwd
+done

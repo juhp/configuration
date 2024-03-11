@@ -1,0 +1,10 @@
+#!/bin/sh
+
+CDROM=$1
+SPICEPORT=6002
+
+set -x
+
+nice -n 19 ionice -c 3 qemu-kvm -m 2048M -cpu host -rtc base=localtime -cdrom $CDROM -boot d -spice port=$SPICEPORT,disable-ticketing -device virtio-serial-pci -device virtserialport,chardev=spicechannel0,name=com.redhat.spice.0 -chardev spicevmc,id=spicechannel0,name=vdagent -daemonize
+
+remote-viewer --title "$1" spice://localhost:$SPICEPORT

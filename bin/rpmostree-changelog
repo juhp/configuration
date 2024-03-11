@@ -1,0 +1,3 @@
+#!/bin/sh
+
+rpm-ostree db diff -c|less

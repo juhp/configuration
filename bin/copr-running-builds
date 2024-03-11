@@ -1,0 +1,7 @@
+#!/bin/bash
+
+for u in $(copr monitor petersen/$1 --fields=url_build_log,state | jl -l 'filter (\o -> o.state = "running") | map _.url_build_log'); do
+    url=$(echo $u | sed s%\"%%g)
+    echo -n $url
+    curl -I --no-progress-meter $url | grep 'content-length:' | sed s/content-length://
+done

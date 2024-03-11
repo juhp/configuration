@@ -1,0 +1,7 @@
+#!/bin/sh
+
+if [ -x /usr/bin/evince ]; then
+    evince $*
+elif [ -x /usr/bin/flatpak-spawn ]; then
+    flatpak-spawn --host flatpak run org.gnome.Evince $*
+fi

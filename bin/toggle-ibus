@@ -1,0 +1,7 @@
+#!/bin/sh
+
+if [ "$(gsettings get org.gnome.desktop.input-sources sources)" = "[('xkb', 'us')]" ]; then
+    gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('ibus', 'anthy')]"
+else
+    gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us')]"
+fi
