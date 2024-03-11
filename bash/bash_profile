@@ -7,7 +7,13 @@ fi
 
 # User specific environment and startup programs
 
-export PATH=$HOME/bin:$HOME/.local/bin:$PATH:$HOME/.cabal/bin:$HOME/.cargo/bin:$HOME/.local/share/coursier/bin
+CURRENTGLIBC=$(rpm -q --provides glibc | grep 2.38) # F39+
+if [ -n "$CURRENTGLIBC" ]; then
+    export PATH=$HOME/bin:$HOME/.local/bin:$PATH:$HOME/.cabal/bin:$HOME/.cargo/bin
+else
+    export PATH=$HOME/bin:$PATH:$HOME/.cabal/bin:$HOME/.cargo/bin:$HOME/.local/bin
+fi
+#:$HOME/.local/share/coursier/bin
 
 export PANGO_LANGUAGE=ja
 
