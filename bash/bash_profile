@@ -15,13 +15,14 @@ else
 fi
 #:$HOME/.local/share/coursier/bin
 
+#NPM_PACKAGES="${HOME}/.npm-packages"
+#PATH="$PATH:$NPM_PACKAGES/bin"
+
 export PANGO_LANGUAGE=ja
 
 export VIRSH_DEFAULT_CONNECT_URI=qemu:///system
 
 export DARCS_PAGER=cat
-
-export RPM_BUILD_NCPUS=2
 
 export TMPDIR=$HOME/tmp
 
