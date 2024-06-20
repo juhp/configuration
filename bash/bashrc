@@ -25,7 +25,7 @@ if [ "$HOSTNAME" = "toolbox" -o -n "$VERSION" ]; then
     export -n VERSION
 fi
 
-eval $(grep "\(VERSION_ID\|VARIANT_ID\)" /etc/os-release)
+eval $(grep "\(^ID=\|VERSION_ID\|VARIANT_ID\|ANSI_COLOR\)" /etc/os-release)
 
 if [ -n "$container" ]; then
 export HISTFILE="${HOME}/.bash_history.tb.${ID}${VERSION_ID}.${TERM}"
@@ -43,7 +43,7 @@ alias man='LANG=C man'
 
 # background colours
 # add 60 for light colours
-RED="\e[41m"
+#RED="\e[41m"
 #GREEN="\e[42m"
 YELLOW="\e[43m"
 BLUE="\e[44m"
@@ -55,11 +55,10 @@ else
     WHITE="\e[97m"
     BLACK="\e[1;30m"
 fi
-REVERSEVIDEO="\e[7m"
+#REVERSEVIDEO="\e[7m"
 REVERSEVIDEODIM="\e[7;2m"
 COL_RESET="\e[0m"
 
-PS_TIME="« \t \D{%a %e日} «"
 
 function prompt_command {
     # if [ -z "$errorshown" -a $? -ne 0 ]; then
@@ -83,6 +82,10 @@ function prompt_command {
     fi
     if [ -n "$container" -a "$VARIANT_ID" = "eln" ]; then
         hostname="⬢$hexspace$VARIANT_ID$VERSION_ID"
+    elif [ -n "$container" -a -n "$DISTROBOX_ENTER_PATH" ]; then
+        hostname="⬢$hexspace$HOSTNAME"
+    elif [ -n "$container" -a -n "$ID" -a -n "$VERSION_ID" ]; then
+        hostname="⬢$hexspace$ID$VERSION_ID"
     elif [ -n "$container" -a -n "$HOSTNAME$VERSION_ID" ]; then
         hostname="⬢$hexspace$HOSTNAME$VERSION_ID"
     elif [ "$HOSTNAME" = "toolbox" -o -n "$TOOLBOX_PATH" ]; then
@@ -132,24 +135,26 @@ case $BASH_VERSION in
     4.2*)
         PS1="\[$WHITE$BLUE\]\${userhost}\[$WHITE$PURPLE\] \w\${branch} \[$COL_RESET\]\$ " ;;
     *)
-        PS1="\[$WHITE$BLUE\]\w\${branch@P}\[$COL_RESET\]\n\${userhost:+\[$BLACK$YELLOW\]\${userhost}}\$\[$COL_RESET\] "'\[$(vterm_prompt_end)\]'
+        PS1="\[$WHITE$BLUE\]\w\${branch@P}\[$COL_RESET\]\n\${userhost:+\[$BLACK$YELLOW\]\${userhost}}\$\[$COL_RESET\]"'\[$(vterm_prompt_end)\]'
         echo -e "my old prompt: ${PS1@P}"
-        prompt_color_force=1
-        if [ -f /etc/profile.d/bash-color-prompt.sh ]; then
-            # source /etc/profile.d/bash-color-prompt.sh
-            source ~/fedora/shell-color-prompt/bash-color-prompt.sh
+        prompt_color_force=${prompt_color_force:-1}
+        BASH_COLOR_PROMPT="/etc/profile.d/bash-color-prompt.sh"
+        if [ -f "$BASH_COLOR_PROMPT" ]; then
+            source "$BASH_COLOR_PROMPT"
         fi
         ;;
 esac
 
-export PS0="$REVERSEVIDEODIM» \t \D{%a %e日} »$COL_RESET\n"
+TIMESTAMP="\t \D{%a %e日}"
 
-PROMPT_START="$REVERSEVIDEODIM$PS_TIME$COL_RESET\n"
-PROMPT_COLOR='30;43'
-PROMPT_DIR_COLOR='44'
+export PS0="$REVERSEVIDEODIM» $TIMESTAMP »$colorreset\n"
+
+PROMPT_START="${REVERSEVIDEODIM}« $TIMESTAMP «$colorreset\n"
+PROMPT_COLOR="$ANSI_COLOR;2;7;47"
+PROMPT_DIR_COLOR='1;43;30'
 PROMPT_SEPARATOR=''
 PROMPT_USERHOST='${userhost}'
-PROMPT_END='${branch@P}'"$colorreset"
+PROMPT_END='${branch@P}''\[$(vterm_prompt_end)\]'"$colorreset"
 
 if [ -x "/usr/bin/zoxide" ]; then
     eval "$(zoxide init bash)"
