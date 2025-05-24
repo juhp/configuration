@@ -37,7 +37,7 @@
 
 ;;; mode-line: reduce whitespace
 (setq-default mode-line-format
-              '("%e" mode-line-front-space mode-line-mule-info mode-line-client mode-line-modified mode-line-remote mode-line-frame-identification mode-line-buffer-identification "  " mode-line-position (vc-mode vc-mode) " "
+              '("%e" mode-line-front-space mode-line-mule-info mode-line-client mode-line-modified mode-line-remote mode-line-frame-identification mode-line-buffer-identification "  " mode-line-position " "
                 mode-line-modes mode-line-misc-info mode-line-end-spaces)
 
               mode-line-buffer-identification
@@ -56,16 +56,18 @@
 (load custom-file)
 
 (global-set-key "\C-xw" 'write-region)
+(global-set-key "\C-ca" 'aidermacs-transient-menu)
 (global-set-key "\C-cb" 'magit-checkout)
 ;;(global-set-key "\C-ce" 'shell)
 (global-set-key "\C-cf" 'find-function-other-window)
-(global-set-key "\C-cg" 'magit-status)
+(global-set-key "\C-cg" 'magit-status) ; or use C-x g (C-x M-g)
 (global-set-key "\C-cj" 'compile)
 (global-set-key "\C-ck" 'find-function-on-key)
 (global-set-key "\C-cl" 'magit-log-current)
 (global-set-key "\C-cq" 'bury-buffer)
 (global-set-key "\C-ct" 'vterm-toggle)
-(global-set-key "\C-cv" 'multi-vterm-project)
+(global-set-key "\C-cv" 'projectile-run-vterm)
+(global-set-key "\C-c\C-m" 'gptel-send)
 ;; (global-set-key "\C-c0" '(lambda () (interactive) (shell "*shell*")))
 ;; (global-set-key "\C-c1" '(lambda () (interactive) (shell "*shell*<1>")))
 ;; (global-set-key "\C-c2" '(lambda () (interactive) (shell "*shell*<2>")))
@@ -219,6 +221,9 @@
 (setq magit-omit-untracked-dir-contents t)
 (put 'scroll-left 'disabled nil)
 
+;;; darcsum
+(autoload 'darcsum-whatsnew "darcsum" nil t)
+
 ;;; browse-url
 (setq browse-url-browser-function 'browse-url-xdg-open)
 
@@ -298,18 +303,32 @@
     (add-to-list 'grep-find-ignored-files "*_flymake.*")
     (add-to-list 'grep-find-ignored-directories "dist")
     (add-to-list 'grep-find-ignored-directories "dist-newstyle")
+    (add-to-list 'grep-find-ignored-directories ".stack-work")
     ))
 
 ;;; undo-tree
-(global-undo-tree-mode)
+;(global-undo-tree-mode)
 
-;; (require 'ansi-color)
-;; (defun colorize-compilation-buffer ()
-;;   (when (eq major-mode 'compilation-mode)
-;;     (ansi-color-process-output nil)
-;;     (setq-local comint-last-output-start (point-marker))))
-;; (add-hook 'compilation-filter-hook
-;;           #'colorize-compilation-buffer)
+(use-package ansi-color
+  :hook (compilation-filter . ansi-color-compilation-filter))
 
 ;;; git-gutter
 (global-git-gutter-mode +1)
+
+;;; vterm
+(setq vterm-max-scrollback 30000)
+
+;;; agda
+(add-to-list 'auto-mode-alist '("\\.lagda.md\\'" . agda2-mode))
+
+;;; lean4
+(add-to-list 'load-path "~/.emacs.d/lisp/lean4-mode")
+(autoload 'lean4-mode "lean4-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.lean\\'" . lean4-mode))
+
+;;; tags
+; don't ask "Keep current list of tags tables also?"
+(setq tags-add-tables nil)
+
+;;; purescript
+(add-hook 'purescript-mode-hook 'purescript-indentation-mode)
