@@ -3,4 +3,8 @@
 #OSTREEPIN=$HOME/.cargo/bin/ostree-pin
 OSTREEPIN=$HOME/.local/bin/ostree-pin
 
-sudo $OSTREEPIN $*
+case "$1" in
+    -h) $OSTREEPIN $* ;;
+    --help) $OSTREEPIN $* ;;
+    *) sudo $OSTREEPIN $* ;;
+esac

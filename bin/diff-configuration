@@ -12,7 +12,7 @@ done
 #diff -u {$CFGDIR/,~/.}yi/yi.hs
 
 # docker-run google-chrome touchpad-natural-scroll
-for i in $(ls $CFGDIR/bin); do
+for i in $(ls -B $CFGDIR/bin); do
     if [ -f ~/bin/"$i" ]; then
         diff -u {$CFGDIR/,~/}bin/$i
         if [ ! -x $CFGDIR/bin/$i ]; then
@@ -22,7 +22,7 @@ for i in $(ls $CFGDIR/bin); do
         echo "no ~/bin/$i" >&2
     fi
 done
-for i in $(ls ~/bin); do
+for i in $(ls -B ~/bin); do
     if [ ! -f "$CFGDIR/bin/$i" ]; then
         echo "no bin/$i" >&2
     fi

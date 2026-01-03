@@ -68,12 +68,6 @@
 (global-set-key "\C-ct" 'vterm-toggle)
 (global-set-key "\C-cv" 'projectile-run-vterm)
 (global-set-key "\C-c\C-m" 'gptel-send)
-;; (global-set-key "\C-c0" '(lambda () (interactive) (shell "*shell*")))
-;; (global-set-key "\C-c1" '(lambda () (interactive) (shell "*shell*<1>")))
-;; (global-set-key "\C-c2" '(lambda () (interactive) (shell "*shell*<2>")))
-;; (global-set-key "\C-c3" '(lambda () (interactive) (shell "*shell*<3>")))
-;; (global-set-key "\C-c4" '(lambda () (interactive) (shell "*shell*<4>")))
-;; (global-set-key "\C-c5" '(lambda () (interactive) (shell "*shell*<5>")))
 (global-set-key "\C-z" 'isearchb-activate)
 (global-set-key [C-tab] 'mode-line-other-buffer)
 (global-set-key [M-left] 'backward-sexp)
@@ -304,6 +298,7 @@
     (add-to-list 'grep-find-ignored-directories "dist")
     (add-to-list 'grep-find-ignored-directories "dist-newstyle")
     (add-to-list 'grep-find-ignored-directories ".stack-work")
+    (add-to-list 'grep-find-ignored-directories ".lake")
     ))
 
 ;;; undo-tree
@@ -332,3 +327,19 @@
 
 ;;; purescript
 (add-hook 'purescript-mode-hook 'purescript-indentation-mode)
+
+(defun project-vterm ()
+  "Start VTerm in the current project's root directory.
+If a buffer already exists for running vterm in the project's root,
+switch to it.  Otherwise, create a new VTerm buffer.
+With \\[universal-argument] prefix arg, create a new VTerm buffer even
+if one already exists."
+  (interactive)
+  (defvar vterm-buffer-name)
+  (let* ((default-directory (project-root (project-current t)))
+         (vterm-buffer-name (project-prefixed-buffer-name "vterm"))
+         (vterm-buffer (get-buffer vterm-buffer-name)))
+    (if (and vterm-buffer (not current-prefix-arg))
+        (pop-to-buffer vterm-buffer (bound-and-true-p display-comint-buffer-action))
+      (vterm t))))
+(keymap-set project-prefix-map "v" #'project-vterm)

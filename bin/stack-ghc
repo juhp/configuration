@@ -1,7 +1,11 @@
 #!/bin/sh
 
 case $1 in
-    8.4*) RESOLVE=nightly
+    8.8*) RESOLVE=nightly
+           ;;
+    8.6*) RESOLVE=lts-14
+           ;;
+    8.4*) RESOLVE=lts-12
            ;;
     8.2*) RESOLVE=lts-11
            ;;
@@ -17,4 +21,4 @@ case $1 in
 esac
 shift
 
-stack -j1 --resolver ${RESOLVE} $*
+stack-resolver ${RESOLVE} $*

@@ -3,4 +3,5 @@
 # turn off XIM
 
 #LANG=en_US.utf8 LC_COLLATE=C XMODIFIERS=@im=none -rv -fn "Monospace 12"
-/usr/bin/emacs -g 165x51 $@
+# /usr/bin/emacs -g 165x51 $@
+/usr/bin/emacs -fn "Monospace 16" -g 170x50 $@

@@ -1,3 +1,4 @@
 #!/bin/sh
 
-stack -j1 --resolver lts $*
+# use: "stack-all lts"
+stack-resolver lts $*

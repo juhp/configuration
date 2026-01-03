@@ -7,13 +7,27 @@ fi
 
 # User specific environment and startup programs
 
-CURRENTGLIBC=$(rpm -q --provides glibc | grep 2.38) # F39+
-if [ -n "$CURRENTGLIBC" ]; then
-    export PATH=$HOME/bin:$HOME/.local/bin:$PATH:$HOME/.cabal/bin:$HOME/.cargo/bin
-else
-    export PATH=$HOME/bin:$PATH:$HOME/.cabal/bin:$HOME/.cargo/bin:$HOME/.local/bin
+# FIXME remove_path_duplicates
+
+if [ "$(type -t add_to_path)" = "function" ]; then
+    if [ -x /usr/bin/rpm ]; then
+        # GLIBC_VERSION=$(rpm -q --provides glibc | grep 'libc.so.6(GLIBC_2.[34][0-9])' | sed -e 's/libc.so.6(\(.*\))(64bit)/\1/')
+        CURRENTGLIBC=$(rpm -q --provides glibc | grep 'libc.so.6(GLIBC_2.43)') # F44+
+    fi
+    if [ -n "$CURRENTGLIBC" ]; then
+        add_to_path $HOME/.local/bin before
+        add_to_path $HOME/bin before
+        add_to_path $HOME/.cargo/bin
+    else
+        add_to_path $HOME/bin before
+        add_to_path $HOME/.cargo/bin
+        remove_from_PATH $HOME/.local/bin
+        add_to_path $HOME/.local/bin
+    fi
+    #:$HOME/.local/share/coursier/bin
+    #add_to_path "$HOME/.elan/bin" before
+    export PATH
 fi
-#:$HOME/.local/share/coursier/bin
 
 #NPM_PACKAGES="${HOME}/.npm-packages"
 #PATH="$PATH:$NPM_PACKAGES/bin"

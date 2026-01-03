@@ -13,17 +13,13 @@ if [ -f /etc/bashrc ]; then
     source /etc/bashrc
 fi
 
-# exit if non-interactive
+# exit if non-interactive (no stdin)
 [ ! -t 0 ] && return 0
 
 ############### below is for interactive shell only ###########################
 
-echo -e "old prompt: ${PS1@P}"
-
-# should be redundant now?
-# don't export: eg breaks dotnet
-if [ "$HOSTNAME" = "toolbox" -o -n "$VERSION" ]; then
-    export -n VERSION
+if [ "${-#*i}" != "$-" ]; then
+    echo -e "default prompt: ${PS1@P}"
 fi
 
 eval $(grep "\(^ID=\|VERSION_ID\|VARIANT_ID\|ANSI_COLOR\)" /etc/os-release)
@@ -40,77 +36,71 @@ set +h
 
 # User specific aliases and functions
 alias ls='ls --color=auto'
-alias man='LANG=C man'
+#alias man='LANG=C man'
 
 # background colours
 # add 60 for light colours
 #RED="\e[41m"
-#GREEN="\e[42m"
-YELLOW="\e[43m"
-BLUE="\e[44m"
+GREEN="\e[42m"
+#YELLOW="\e[43m"
+#BLUE="\e[44m"
 PURPLE="\e[45m"
-if [ -x "/usr/bin/tput" ] && [ "$(tput colors)" -le "8" ]; then
-    WHITE="\e[37m"
-    BLACK="\e[30m"
-else
-    WHITE="\e[97m"
-    BLACK="\e[1;30m"
-fi
 #REVERSEVIDEO="\e[7m"
 REVERSEVIDEODIM="\e[7;2m"
 COL_RESET="\e[0m"
 
 
-function prompt_command {
-    # if [ -z "$errorshown" -a $? -ne 0 ]; then
-    #     exitstatus="$WHITE$RED error $COL_RESET"
-    #     errorshown=yes
-    # else
-    #     exitstatus=""
-    #     unset errorshown
-    # fi
+function _prompt_command {
+    PROMPT_GIT_BRANCH=$(/usr/bin/git rev-parse --abbrev-ref HEAD 2> /dev/null)
 
-    ref=$(/usr/bin/git rev-parse --abbrev-ref HEAD 2> /dev/null)
-    branch=${ref:+\\[$PURPLE\\]:$ref}
-
-    if [ "$USER" = "petersen" -o -z "$USER" ]; then
-        username=""
+    if [ -n "$LEGACY_PROMPT" ]; then
+        if [ "$USER" = "petersen" -o -z "$USER" ]; then
+            username=""
+        else
+            username="\u"
+        fi
+        if [ "$TERM" = "xterm-256color" -a ! "$INSIDE_EMACS" = "vterm" ]; then
+            hexspace="⬢"
+        fi
+        if [ -n "$container" -a "$VARIANT_ID" = "eln" ]; then
+            hostname="$hexspace$VARIANT_ID$VERSION_ID"
+        elif [ -n "$container" -a -n "$DISTROBOX_ENTER_PATH" ]; then
+            hostname="$hexspace$HOSTNAME"
+        elif [ -n "$container" -a -n "$ID" -a -n "$VERSION_ID" ]; then
+            hostname="$hexspace$ID$VERSION_ID"
+        elif [ -n "$container" -a -n "$HOSTNAME$VERSION_ID" ]; then
+            hostname="$hexspace$HOSTNAME$VERSION_ID"
+        elif [ "$HOSTNAME" = "toolbox" -o -n "$TOOLBOX_PATH" ]; then
+            hostname="$hexspace\h"
+        elif [ "$HOSTNAME" = "tlbx" ]; then
+            hostname="${hexspace}tlbx"
+        fi
+        if [ -n "${username}" -a -n "${hostname}" ]; then
+            userhost="${username}@${hostname}"
+        elif [ -n "${username}${hostname}" ]; then
+            userhost="${username}${hostname}"
+        fi
+        if [ "$TERM" = "xterm-256color" ]; then
+            title="\e]0;${userhost}${userhost:+:}\w\a"
+        fi
     else
-        username="\u"
-    fi
-    if [ "$TERM" = "xterm-256color" -a ! "$INSIDE_EMACS" = "vterm" ]; then
-        hexspace=" "
-    fi
-    if [ -n "$container" -a "$VARIANT_ID" = "eln" ]; then
-        hostname="⬢$hexspace$VARIANT_ID$VERSION_ID"
-    elif [ -n "$container" -a -n "$DISTROBOX_ENTER_PATH" ]; then
-        hostname="⬢$hexspace$HOSTNAME"
-    elif [ -n "$container" -a -n "$ID" -a -n "$VERSION_ID" ]; then
-        hostname="⬢$hexspace$ID$VERSION_ID"
-    elif [ -n "$container" -a -n "$HOSTNAME$VERSION_ID" ]; then
-        hostname="⬢$hexspace$HOSTNAME$VERSION_ID"
-    elif [ "$HOSTNAME" = "toolbox" -o -n "$TOOLBOX_PATH" ]; then
-        hostname="⬢$hexspace\h"
-    elif [ "$HOSTNAME" = "tlbx" ]; then
-        hostname="⬢${hexspace}tlbx"
-    fi
-    if [ -n "${username}" -a -n "${hostname}" ]; then
-        userhost="${username}@${hostname}"
-    elif [ -n "${username}${hostname}" ]; then
-        userhost="${username}${hostname}"
-    fi
-    if [ "$TERM" = "xterm-256color" ]; then
-        title="\e]0;${userhost}${userhost:+:}\w\a"
+        title="\e]0;${PROMPT_USERHOST}${PROMPT_USERHOST:+:}\w\a"
     fi
     case $BASH_VERSION in
         4.2*)
-            echo -e "$REVERSEVIDEODIM $(date +"%a %T") $COL_RESET$COL_RESET" ;;
+            echo -e "$REVERSEVIDEODIM $(date +"%a %T") $COL_RESET"
+            ;;
         *)
-            echo -n -e "${title@P}" ;;
+            if [ "$TERM" = "xterm-256color" ]; then
+                echo -n -e "${title@P}"
+            fi
+            ;;
+
     esac
 }
 
-PROMPT_COMMAND=prompt_command
+
+PROMPT_COMMAND+=(_prompt_command)
 
 vterm_printf(){
     if [ -n "$TMUX" ] && ([ "${TERM%%-*}" = "tmux" ] || [ "${TERM%%-*}" = "screen" ] ); then
@@ -126,44 +116,81 @@ vterm_printf(){
 
 # for prompt and directory tracking
 # was "51;A$(whoami)@$(hostname):$(pwd)"
-vterm_prompt_end(){
-if [ "$INSIDE_EMACS" = "vterm" ]; then
-    vterm_printf "51;A$(pwd)"
-fi
+emacs_term_prompt_end(){
+    case "$INSIDE_EMACS" in
+        vterm) vterm_printf "51;A$PWD" ;;
+        *,eat) vterm_printf "51;e;A;$(echo "$PWD" | base64)" ;;
+    esac
 }
 
 case $BASH_VERSION in
     4.2*)
+        BLUE="\e[44m"
+        if [ -x "/usr/bin/tput" ] && [ "$(tput colors)" -le "8" ]; then
+            WHITE="\e[37m"
+            # BLACK="\e[30m"
+        else
+            WHITE="\e[97m"
+            # BLACK="\e[1;30m"
+        fi
         PS1="\[$WHITE$BLUE\]\${userhost}\[$WHITE$PURPLE\] \w\${branch} \[$COL_RESET\]\$ " ;;
     *)
-        #PS1="\[$WHITE$BLUE\]\w\${branch@P}\[$COL_RESET\]\n\${userhost:+\[$BLACK$YELLOW\]\${userhost}}\$\[$COL_RESET\] "'\[$(vterm_prompt_end)\]'
+        #PS1="\[$WHITE$BLUE\]\w\${branch@P}\[$COL_RESET\]\n\${userhost:+\[$BLACK$YELLOW\]\${userhost}}\$\[$COL_RESET\] "'\[$(emacs_term_prompt_end)\]'
         #echo -e "old prompt: ${PS1@P}"
-        bash_prompt_color_force=${bash_prompt_color_force:-1}
+        bash_prompt_color_force=1 # ${bash_color_prompt_force:-1}
         #BASH_COLOR_PROMPT="/etc/profile.d/bash-color-prompt.sh"
         BASH_COLOR_PROMPT=~/fedora/shell-color-prompt/bash-color-prompt.sh
         if [ -f "$BASH_COLOR_PROMPT" ]; then
             source "$BASH_COLOR_PROMPT"
+        fi
+        if [ -z "$LEGACY_PROMPT" -a -n "$BASH_COLOR_PROMPT_VERSION" ]; then
+            prompt_highlight '1;7'
+            prompt_os_color  107
+            prompt_dir_color '33;49'
+            prompt_container_host $USER #petersen-thinkpadp16vgen1
+            prompt_git_color 35
         fi
         ;;
 esac
 
 TIMESTAMP="\t \D{%a %e日}"
 
-#export PS0="$REVERSEVIDEODIM» $TIMESTAMP »$colorreset\n"
+PS0="$REVERSEVIDEODIM» $TIMESTAMP »${COL_RESET}\n"
 
-#PROMPT_START="${REVERSEVIDEODIM}« $TIMESTAMP «$colorreset\n"
-PROMPT_START="${REVERSEVIDEODIM}$TIMESTAMP$colorreset\n"
-#PROMPT_COLOR='1;30;43'
-#PROMPT_COLOR="$ANSI_COLOR;43"
-#PROMPT_COLOR="$ANSI_COLOR;2;7;47"
-PROMPT_COLOR="$ANSI_COLOR;47"
-PROMPT_BOLD='7'
-#PROMPT_DIR_COLOR='1;44'
-PROMPT_DIR_COLOR='33;40'
+PROMPT_START="${REVERSEVIDEODIM}« $TIMESTAMP «${COL_RESET}${GREEN}"'${SHLVL#1}'"${COL_RESET}\n"
+#PROMPT_START="${REVERSEVIDEODIM}$TIMESTAMP$COL_RESET\n"
+if [ -n "$LEGACY_PROMPT" ]; then
+    #PROMPT_COLOR='1;30;43'
+    #PROMPT_COLOR="$ANSI_COLOR;43"
+    #PROMPT_COLOR="$ANSI_COLOR;2;7;47"
+    PROMPT_COLOR="$ANSI_COLOR;47"
+    PROMPT_HIGHLIGHT='7;1'
+    #PROMPT_DIR_COLOR='1;44'
+    PROMPT_DIR_COLOR='33;40'
+    PROMPT_USERHOST='${userhost}'
+fi
 PROMPT_SEPARATOR=''
-PROMPT_USERHOST='${userhost}'
-PROMPT_END='${branch@P}''\[$(vterm_prompt_end)\]'"$colorreset"
+PROMPT_END='${branch@P}'\['$(emacs_term_prompt_end)'"$COL_RESET\]"
 
 if [ -x "/usr/bin/zoxide" ]; then
     eval "$(zoxide init bash)"
 fi
+
+remove_from_PATH() {
+    PATH=$(echo $PATH | sed -e s"%$1:%%" -e s"%:$1$%%")
+}
+
+add_to_path() {
+    [ ! -d "$1" ] && return
+
+    case ":${PATH}:" in
+        *:"$1":*)
+            ;;
+        *)
+            if [ "$2" = "before" ] ; then
+                PATH=$1:$PATH
+            else
+                PATH=$PATH:$1
+            fi
+    esac
+}

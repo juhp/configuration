@@ -1,6 +1,37 @@
 #!/bin/sh
 
-RELEASE=${1:-30}
-export HISTFILE="${HOME}/.bash_history.tb${RELEASE}"
+TOOLBOX=/usr/bin/toolbox
+#TOOLBOX=$HOME/src/toolbox/toolbox
 
-LANG=C.utf8 toolbox enter --release $RELEASE
+if [ $# -eq 0 ]; then
+    ARG=37
+else
+    ARG=$1
+    shift
+fi
+
+case $ARG in
+    # 35) CONTAINER=fedora-toolbox-35 ;;
+    # 36) CONTAINER=fedora-toolbox-36 ;;
+    # 37) CONTAINER=fedora-toolbox-37 ;;
+    [1-9][0-9]) RELEASE=$ARG ;;
+    c8) CONTAINER=centos8-toolbox ;;
+    # c9) CONTAINER=centos-stream9 ;;
+    rhel7) CONTAINER=rhel-toolbox-7;;
+    # rhel8.3) CONTAINER=rhel-toolbox-8.3;;
+    # rhel8.4) CONTAINER=rhel-toolbox-8.4;;
+    rhel8) CONTAINER=rhel-toolbox-8.5;;
+    rhel9) CONTAINER=rhel-toolbox-9.0;;
+    *-toolbox*) CONTAINER=$ARG ;;
+    *) CONTAINER=$ARG-toolbox ;;
+esac
+
+LANG=C.utf8
+
+if [ -z "$*" ]; then
+    CMD=enter
+else
+    CMD=run
+fi
+
+$TOOLBOX $CMD ${RELEASE:+--release $RELEASE}${CONTAINER:+--container $CONTAINER} $* || echo "$TOOLBOX $CMD ${RELEASE:+--release $RELEASE}${CONTAINER:+--container $CONTAINER} $*"

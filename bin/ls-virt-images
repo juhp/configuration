@@ -1,5 +1,8 @@
 #!/bin/sh
 
-DIR=/var/lib/libvirt/images
-echo $DIR/
-sudo ls -lth $DIR
+#DIR=/var/lib/libvirt/images
+DIR=/mnt/extreme/default-pool
+# was sudo
+CMD="ls -lth $DIR $*"
+echo $CMD
+$CMD

@@ -59,3 +59,5 @@ if [ $colours -gt 8 ]; then
     sequence "30"
     line {100..107}
 fi
+
+echo

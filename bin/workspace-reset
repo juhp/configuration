@@ -14,10 +14,12 @@ move_win() {
         *nome-terminal) WS=0 ;;
         *macs) WS=1 ;;
         *irefox) WS=2 ;;
-        *chat-gnome) WS=3 ;;
+        *olari) WS=3 ;;
         *chromium-browser) WS=4 ;;
-        *irt-manager) WS=5 CMD="-s$WS" ;;
-        *ibreoffice) WS=6 ;;
+        *luejeans) WS=5 ;;
+        *ibreoffice) WS=4 ;;
+        *irt-manager) WS=6 CMD="-s$WS" ;;
+        *nome-boxes) WS=6 ;;
         *) WS=7 ;;
     esac
     wmctrl -i -r $1 -t $WS

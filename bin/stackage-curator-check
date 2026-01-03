@@ -1,13 +1,14 @@
 #!/bin/sh
 
-BUILD=no
+CURATOR=curator
 
-if [ "$BUILD" = "yes" ]; then
-   pushd ~/github/stackage-curator
-   git pull
-   stack --resolver=lts-12 install stackage-curator
-   popd
-fi
+RESOLVER=lts-14
 
-stack update
-stack-nightly exec /home/petersen/.local/bin/stackage-curator check
+pushd ~/haskell/$CURATOR
+git pull
+stack --resolver $RESOLVER install $CURATOR
+popd
+
+#stack update
+#stack --resolver $RESOLVER exec -- $STACKAGE_CURATOR constraints --target nightly-$(date -u +%F)
+#stack --resolver $RESOLVER exec -- $STACKAGE_CURATOR check-snapshot
