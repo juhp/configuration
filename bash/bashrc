@@ -157,7 +157,7 @@ TIMESTAMP="\t \D{%a %e日}"
 
 PS0="$REVERSEVIDEODIM» $TIMESTAMP »${COL_RESET}\n"
 
-PROMPT_START="${REVERSEVIDEODIM}« $TIMESTAMP «${COL_RESET}${GREEN}"'${SHLVL#1}'"${COL_RESET}\n"
+PROMPT_START="\[${REVERSEVIDEODIM}« $TIMESTAMP «${COL_RESET}${GREEN}"'${SHLVL#1}'"${COL_RESET}\n\]"
 #PROMPT_START="${REVERSEVIDEODIM}$TIMESTAMP$COL_RESET\n"
 if [ -n "$LEGACY_PROMPT" ]; then
     #PROMPT_COLOR='1;30;43'
@@ -170,7 +170,7 @@ if [ -n "$LEGACY_PROMPT" ]; then
     PROMPT_USERHOST='${userhost}'
 fi
 PROMPT_SEPARATOR=''
-PROMPT_END='${branch@P}'\['$(emacs_term_prompt_end)'"$COL_RESET\]"
+PROMPT_END='${branch@P}\[$(emacs_term_prompt_end)\]'"\[$COL_RESET\]"
 
 if [ -x "/usr/bin/zoxide" ]; then
     eval "$(zoxide init bash)"
