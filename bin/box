@@ -6,7 +6,7 @@ TOOLBOX_PROG=/usr/bin/toolbox
 DISTROBOX_PROG=/usr/bin/distrobox
 
 if [ $# -eq 0 ]; then
-    ARG=44
+    ARG=45
 else
     ARG=$1
     shift
@@ -19,15 +19,13 @@ else
 fi
 
 case $ARG in
-    44) CONTAINER=fedora-toolbox-44 ;;
-    hs) CONTAINER=fedora-toolbox-44-haskell ;;
+    45) CONTAINER=fedora-toolbox-44-rebuilt ;;
+    hs) CONTAINER=fedora-toolbox-45-hs ;;
+    44) CONTAINER=fedora-toolbox-44-branched ;;
+    # 44-hs) CONTAINER=fedora-toolbox-44-haskell ;;
     43) CONTAINER=fedora-toolbox-43 ;;
+    43-hs) CONTAINER=fedora-toolbox-43-haskell ;;
     42) CONTAINER=fedora-toolbox-42 ;;
-    41) CONTAINER=fedora-toolbox-41 ;;
-    40) CONTAINER=fedora-toolbox-40 ;;
-    39) CONTAINER=fedora-toolbox-39 ;;
-    38) CONTAINER=fedora-toolbox-38 ;;
-    37) CONTAINER=fedora-toolbox-37 ;;
     c8) CONTAINER=centos-toolbox-stream8 ;;
     c9) CONTAINER=centos-toolbox-stream9 ;;
     c10) CONTAINER=centos-toolbox-stream10 ;;

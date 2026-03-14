@@ -80,42 +80,69 @@ emacs_term_send_dir(){
 }
 
 # Bash Color Prompt
-source ~/src/bash-color-prompt2/bash-color-prompt.sh
+source ~/github/bash-color-prompt/bash-color-prompt.sh
 
-#bcp_os_release ANSI_COLOR
+# Function to get the parent command name
+bcp_subshell() {
+    # IN_NIX_SHELL only for legacy impure nix: was [[ -n "$IN_NIX_SHELL" ||
+    # can switch to /nix/store/* once nix.sh only sources once
+    if [[ "$PATH" == *:/nix/store/* ]]; then
+        bcp_append "❄️ "
+    elif [[ "$SHLVL" -gt 1 && -z "$INSIDE_EMACS" || "$SHLVL" -gt 2 ]]; then
+        # output the command name without headers
+        local parent_cmd=$(ps -p $PPID -o comm= 2>/dev/null)
+        if [ -n "$parent_cmd" ]; then
+            bcp_append "$parent_cmd " "yellow"
+        fi
+    fi
+}
 
 bcp_layout() {
     local exit_code=$1
 
-    bcp_duration 1 "yellow" "took "  "\n"
-    bcp_append "\t \D{%b %-d (%a)}\n" "dim;reverse"
+    bcp_duration 1 "yellow" "took " "\n"
+
+    bcp_append "\t \D{%b %-d (%a)}" "dim;reverse"
+    if [[ $exit_code -ne 0 ]]; then
+        bcp_append " [$exit_code]" "red"
+    fi
+    bcp_append "\n"
+
+    bcp_subshell
+    bcp_shlvl "bgmagenta"
 
     local host=""
     if [ -n "$container" ]; then
-        case "$VARIANT_ID" in
-            eln)
-                host="$VARIANT_ID" ;;
-            *)
-                host="$ID$VERSION_ID" ;;
-        esac
+        # for toolbox
+        if [ -r /run/.containerenv ]; then
+            # This pulls the name= value from the file
+            host=$(grep -oP '(?<=name=")[^"]+' /run/.containerenv | sed "s/fedora-toolbox-/F/")
+            case "$host" in
+                F44-rebuilt)  host="f45" ;;
+                F45-hs)       host="f45-hs" ;;
+                F44-branched) host="f44" ;;
+                F43-haskell)  host="f43-hs" ;;
+            esac
+        else
+            case "$VARIANT_ID" in
+                eln)
+                    host="$VARIANT_ID" ;;
+                *)
+                    host="$ID$VERSION_ID" ;;
+            esac
+        fi
         bcp_append "⬢$host" "$ANSI_COLOR;7;107"
+        # ptyxis provides icon
+        bcp_title "$host:\w"
+    else
+        bcp_title "\w"
     fi
-    # if INSIDE_EMACS toolbox ignore lvl 2
-    # and/or show shell
-    bcp_shlvl "bgmagenta"
 
     bcp_append "\w" "yellow;7;1"
 
-    ## already done by vte.sh
-    # bcp_title "\u@\h"
-
-    bcp_git_branch "bgmagenta;white" "yellow;bgmagenta"
+    bcp_git_branch "" "bgmagenta;white" "yellow;bgmagenta"
 
     emacs_term_send_dir
-
-    if [[ $exit_code -ne 0 ]]; then
-        bcp_append " ✘$exit_code" "red;bold"
-    fi
 
     bcp_append "\$ " "default"
 }
@@ -123,12 +150,6 @@ bcp_layout() {
 bcp_init
 
 # PROMPT_END='${branch@P}\[$(emacs_term_prompt_end)\]'"\[$COL_RESET\]"
-
-## only for legacy nix
-# if [ -n "$IN_NIX_SHELL" ]; then
-#     echo $IN_NIX_SHELL
-#     PROMPT_CONTAINER="❄️$PROMPT_CONTAINER"
-# fi
 
 if [ -x "/usr/bin/zoxide" ]; then
     eval "$(zoxide init bash)"
