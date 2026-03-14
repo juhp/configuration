@@ -21,7 +21,6 @@
       kill-whole-line t
       save-place-file "~/.emacs.d/saveplaces.el"
       save-place-limit 1000
-      ; show-trailing-whitespace t
       show-paren-mode t
       size-indication-mode t
       tar-mode-show-date t
@@ -180,10 +179,6 @@
 ;;; uniquify
 (require 'uniquify)
 
-;;; ack
-(add-to-list 'load-path "~/.emacs.d/lisp/ShellArchive")
-(autoload 'ack "ack" nil t)
-
 ;;; whitespace
 ;; newline causes _ in *compilation*
 (setq-default whitespace-style '(face tabs trailing space-before-tab newline indentation empty space-after-tab tab-mark))
@@ -241,9 +236,9 @@
 (setq projectile-mode-line-function 'projectile-my-mode-line)
 
 ; eglot
-(use-package eglot
-  :config
-  (add-to-list 'eglot-server-programs '(haskell-mode . ("haskell-language-server-wrapper" "--lsp"))))
+;; (use-package eglot
+;;   :config
+;;   (add-to-list 'eglot-server-programs '(haskell-mode . ("haskell-language-server-wrapper" "--lsp"))))
 
 ;;; use flycheck instead of flymake (to avoid process flood)
 (use-package flycheck)
@@ -301,9 +296,7 @@
     (add-to-list 'grep-find-ignored-directories ".lake")
     ))
 
-;;; undo-tree
-;(global-undo-tree-mode)
-
+;; ansi-color
 (use-package ansi-color
   :hook (compilation-filter . ansi-color-compilation-filter))
 
@@ -311,7 +304,7 @@
 (global-git-gutter-mode +1)
 
 ;;; vterm
-(setq vterm-max-scrollback 30000)
+(setq vterm-max-scrollback 90000)
 
 ;;; agda
 (add-to-list 'auto-mode-alist '("\\.lagda.md\\'" . agda2-mode))
