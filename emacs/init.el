@@ -323,10 +323,17 @@
 
 ;;; tags
 ; don't ask "Keep current list of tags tables also?"
-(setq tags-add-tables nil)
+;(setq tags-add-tables nil)
 
 ;;; purescript
 (add-hook 'purescript-mode-hook 'purescript-indentation-mode)
+
+;;; gptel
+(setq gptel-model 'gemini-3-flash-preview ;; 'gemini-3-pro-preview
+      gptel-backend (gptel-make-gemini "Gemini"
+                :key #'gptel-api-key-from-auth-source
+                :stream t
+                ))
 
 (defun project-vterm ()
   "Start VTerm in the current project's root directory.
