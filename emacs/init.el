@@ -1,11 +1,14 @@
 ;;; .emacs.d/init.el
 
+;; by default uses half of cpus
+;(setq native-comp-async-jobs-number 3)
 
 (require 'package)
 ;; (add-to-list 'package-archives
 ;;              '("melpa-stable" . "https://stable.melpa.org/packages/") t)
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/"))
+;(package-initialize)
 
 (setq column-number-mode t
       custom-file "~/.emacs.d/custom.el"
@@ -58,20 +61,35 @@
 (global-set-key "\C-xw" 'write-region)
 (global-set-key "\C-ca" 'aidermacs-transient-menu)
 (global-set-key "\C-cb" 'magit-checkout)
+(global-set-key "\C-cd" 'darcsum-whatsnew)
+(global-set-key "\C-ce" 'eat-project)
+;;(global-set-key "\C-ce" '(lambda () (interactive) (term "/bin/bash")))
 ;;(global-set-key "\C-ce" 'shell)
 (global-set-key "\C-cf" 'find-function-other-window)
 (global-set-key "\C-cg" 'magit-status) ; or use C-x g (C-x M-g)
+;; (global-set-key "\C-cj" '(lambda () (interactive)
+;;                            (let ((type (projectile-project-type)))
+;;                              (if (and type (not (eq type 'generic)))
+;;                                  (call-interactively 'projectile-compile-project)
+;;                                (call-interactively 'compile)))))
 (global-set-key "\C-cj" 'compile)
 (global-set-key "\C-ck" 'find-function-on-key)
 (global-set-key "\C-cl" 'magit-log-current)
 (global-set-key "\C-cq" 'bury-buffer)
 (global-set-key "\C-ct" 'vterm-toggle)
+;;(global-set-key "\C-cv" 'multi-vterm-project)
 (global-set-key "\C-cv" 'projectile-run-vterm)
 (global-set-key "\C-c\C-m" 'gptel-send)
 (global-set-key "\C-z" 'isearchb-activate)
 (global-set-key [C-tab] 'mode-line-other-buffer)
 (global-set-key [M-left] 'backward-sexp)
 (global-set-key [M-right] 'forward-sexp)
+
+;; (defun my-compile-project ()
+;;   (interactive)
+;;   (if (projectile-project-type)
+;;       (call-interactively 'projectile-compile-project)
+;;     (call-interactively 'compile)))
 
 ;;; scrollbar
 (set-scroll-bar-mode 'right)
@@ -134,6 +152,13 @@
 (setq eshell-buffer-shorthand t
       eshell-hist-ignoredups t
       eshell-term-name "eterm-color")
+;; (defun juhp-eshell-hook-fn ()
+;;   (define-key eshell-mode-map "\C-u" 'eshell-kill-input)
+;;   (define-key eshell-mode-map "\C-w" 'backward-kill-word)
+;;   ;(setq pcomplete-cycle-completions nil)
+;;   )
+;; ;(add-hook 'eshell-mode-hook
+;; ;	  'juhp-eshell-hook-fn)
 
 (defun eshell/less (&rest args)
     "Invoke `view-file' on a file."
@@ -149,7 +174,21 @@
 (require 'iswitchb)
 (iswitchb-mode)
 (setq read-buffer-function 'iswitchb-read-buffer)
+;(iswitchb-default-keybindings)
 (defalias 'read-buffer 'iswitchb-read-buffer)
+
+;;; try ido - don't like edit/backspace behaviour
+;(ido-mode)
+
+;; icomplete
+;(icomplete-mode 1)
+
+;; ;;; lookup
+;; (setq lookup-search-agents
+;;       '((ndeb "/home/petersen/share/ebook/daijirin+daily")
+;;         (ndeb "/home/petersen/share/ebook/koujien+chujiten")
+;;         (ndeb "/home/petersen/share/ebook/kanjigen")
+;;         (ndeb "/home/petersen/share/ebook/yubinbango")))
 
 ;;; w3m
 (setq w3m-use-cookies t
@@ -171,6 +210,10 @@
 ;;; saveplace
 (require 'saveplace)
 
+;; scala
+;(add-to-list 'load-path "~/usr/scala/misc/scala-tool-support/emacs/")
+;(require 'scala-mode-auto)
+
 ;;; server
 (setenv "EDITOR" "emacsclient")
 (require 'server)
@@ -181,8 +224,13 @@
 (require 'uniquify)
 
 ;;; ack
-(add-to-list 'load-path "~/.emacs.d/lisp/ShellArchive")
-(autoload 'ack "ack" nil t)
+;(add-to-list 'load-path "~/.emacs.d/lisp/ShellArchive")
+;(autoload 'ack "ack" nil t)
+
+;;; show-wspace
+;; (require 'show-wspace)
+;; (add-hook 'font-lock-mode-hook 'show-ws-highlight-tabs)
+;; (add-hook 'font-lock-mode-hook 'show-ws-highlight-trailing-whitespace)
 
 ;;; whitespace
 ;; newline causes _ in *compilation*
@@ -191,6 +239,8 @@
 (global-whitespace-mode)
 
 ;;; haskell-mode
+;(add-to-list 'load-path "~/.emacs.d/lisp/haskell-mode")
+;(load "haskell-mode-init")
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 (eval-after-load 'haskell-mode
   '(define-key haskell-mode-map "\C-ch" 'haskell-hoogle))
@@ -211,15 +261,89 @@
         (calendar-extract-month iso-date)
         (calendar-extract-year iso-date)))))
 
+;;; git
+;(add-to-list 'load-path "~/.emacs.d/lisp/git-emacs")
+;(require 'git-emacs-autoloads)
+
 ;;; magit
 (setq magit-omit-untracked-dir-contents t)
 (put 'scroll-left 'disabled nil)
+;; (require 'magit-log)
+;; (defun magit-log-format-margin (rev author date)
+;;   (when-let ((option (magit-margin-option)))
+;;     (if magit-log-margin-show-shortstat
+;;         (magit-log-format-shortstat-margin rev)
+;;       (pcase-let ((`(,_ ,style ,width ,details ,details-width)
+;;                    (or magit-buffer-margin
+;;                        (symbol-value option))))
+;;         (magit-make-margin-overlay
+;;          (concat (and details
+;;                       (concat (propertize (truncate-string-to-width
+;;                                            (or author "")
+;;                                            details-width
+;;                                            nil ?\s (make-string 1 magit-ellipsis))
+;;                                           'face 'magit-log-author)
+;;                               " "))
+;;                  (propertize
+;;                   (if (and
+;;                        (> (- (float-time)
+;;                              (if (stringp date) (string-to-number date) date))
+;;                           65000)
+;;                        (stringp style))
+;;                       (format-time-string
+;;                        style
+;;                        (seconds-to-time (string-to-number date)))
+;;                     (pcase-let* ((abbr (eq style 'age-abbreviated))
+;;                                  (`(,cnt ,unit) (magit--age date abbr)))
+;;                       (format (format (if abbr "%%2i%%-%ic" "%%2i %%-%is")
+;;                                       (- width (if details (1+ details-width) 0)))
+;;                               cnt unit)))
+;;                   'face 'magit-log-date)))))))
 
 ;;; darcsum
 (autoload 'darcsum-whatsnew "darcsum" nil t)
 
+;;; ghc-mod
+;(add-to-list 'load-path "~/.emacs.d/lisp/ghc-mod/elisp")
+;(autoload 'ghc-init "ghc" nil t)
+;(add-hook 'haskell-mode-hook (lambda () (ghc-init)))
+;; (add-hook 'haskell-mode-hook (lambda () (ghc-init) (flymake-mode)))
+
 ;;; browse-url
 (setq browse-url-browser-function 'browse-url-xdg-open)
+
+;; ;;; browse-keyword-search
+;; (require 'keyword-search)
+;; (eval-after-load 'haskell-mode
+;;   '(define-key haskell-mode-map (kbd "C-c h")
+;;      (lambda ()
+;;        (interactive)
+;;        (keyword-search-at-point "hayoo"))))
+;; (define-key mode-specific-map [?b] 'keyword-search)
+;; (define-key mode-specific-map [?B] 'keyword-search-quick)
+
+;;;; rpm-spec-mode - tmp
+;(autoload 'rpm-spec-mode "rpm-spec-mode" "RPM spec mode." t)
+;(add-to-list 'auto-mode-alist '("\\.spec\\(\\.in\\)?$" . rpm-spec-mode))
+
+;;; structured-haskell-mode
+;(add-to-list 'load-path "~/.emacs.d/lisp/structured-haskell-mode/elisp")
+;(require 'shm)
+;(add-hook 'haskell-mode-hook 'structured-haskell-mode)
+;(set-face-background 'shm-current-face "#eee8d5")
+;(set-face-background 'shm-quarantine-face "lemonchiffon")
+
+;; Intero
+;(require 'intero)
+;(add-hook 'haskell-mode-hook 'intero-mode)
+
+;; (use-package dante
+;;   :ensure t
+;;   :after haskell-mode
+;;   :commands 'dante-mode
+;;   :init
+;;   (add-hook 'haskell-mode-hook 'dante-mode)
+;;   (add-hook 'haskell-mode-hook 'flycheck-mode))
 
 ;;; git-ps1
 (let ((file "/usr/share/git-core/contrib/completion/git-prompt.sh"))
@@ -229,21 +353,64 @@
     (make-variable-buffer-local 'git-ps1-mode)
     (add-hook 'dired-mode-hook 'git-ps1-mode)))
 
+;;; term
+;(require 'term)
+;(define-key term-mode-map "\t" 'complete)
+;(eval-after-load 'term
+;  '(progn
+;     (require 'minibuffer)
+;     (define-key term-mode-map "\t" 'completion-at-point)))
+
+;(let (term-escape-char)
+;  (term-set-escape-char ?\C-c)
+;  )
+
 (savehist-mode)
 
 ;;; projectile
 (require 'projectile)
 (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 (projectile-mode +1)
+;; ; put cabal before stack
+;; (projectile-register-project-type 'haskell-cabal #'projectile-cabal-project-p
+;;                                   :compile "cabal build"
+;;                                   :test "cabal test"
+;;                                   :test-suffix "Spec")
 (defun projectile-my-mode-line ()
   "Report project name and type in the modeline."
   " Prj")
 (setq projectile-mode-line-function 'projectile-my-mode-line)
 
 ; eglot
-(use-package eglot
-  :config
-  (add-to-list 'eglot-server-programs '(haskell-mode . ("haskell-language-server-wrapper" "--lsp"))))
+;; (use-package eglot
+;; ;  :ensure t
+;;   :config
+;;   (add-to-list 'eglot-server-programs '(haskell-mode . ("haskell-language-server-wrapper" "--lsp"))))
+;(add-hook 'haskell-mode-hook 'eglot-ensure)
+
+;;; has problems finding other modules?
+;; ;; LSP
+;; (use-package flycheck
+;;   :ensure t
+;;   :init
+;;   (global-flycheck-mode t))
+;; (use-package yasnippet
+;;   :ensure t)
+;; (use-package lsp-mode
+;;   :ensure t
+;;   :hook (haskell-mode . lsp)
+;;   :commands lsp)
+;; (use-package lsp-ui
+;;   :ensure t
+;;   :commands lsp-ui-mode)
+;; (use-package lsp-haskell
+;;  :ensure t
+;;  :config
+;;  (setq lsp-haskell-process-path-hie "ghcide")
+;;  (setq lsp-haskell-process-args-hie '())
+;;  ;; Comment/uncomment this line to see interactions between lsp client/server.
+;;  ;;(setq lsp-log-io t)
+;;  )
 
 ;;; use flycheck instead of flymake (to avoid process flood)
 (use-package flycheck)
@@ -301,9 +468,29 @@
     (add-to-list 'grep-find-ignored-directories ".lake")
     ))
 
-;;; undo-tree
+;;; undo-tree - not leaking memory like crazy?
 ;(global-undo-tree-mode)
 
+;; (require 'ansi-color)
+;; ;; (defun compile-colorize-compilation ()
+;; ;;   "Colorize from `compilation-filter-start' to `point'."
+;; ;;   (let ((inhibit-read-only t))
+;; ;;     (ansi-color-apply-on-region
+;; ;;      compilation-filter-start (point))))
+
+;; ;; or:
+;; ;; (let ((inhibit-read-only t))
+;; ;; (goto-char compilation-filter-start)
+;; ;; (move-beginning-of-line nil)
+;; ;; (ansi-color-apply-on-region (point) (point-max)))
+
+;; (defun colorize-compilation-buffer ()
+;;   (when (eq major-mode 'compilation-mode)
+;;     (ansi-color-process-output nil)
+;;     (setq-local comint-last-output-start (point-marker))))
+
+;; (add-hook 'compilation-filter-hook
+;;           #'colorize-compilation-buffer)
 (use-package ansi-color
   :hook (compilation-filter . ansi-color-compilation-filter))
 
@@ -311,7 +498,7 @@
 (global-git-gutter-mode +1)
 
 ;;; vterm
-(setq vterm-max-scrollback 30000)
+(setq vterm-max-scrollback 90000)
 
 ;;; agda
 (add-to-list 'auto-mode-alist '("\\.lagda.md\\'" . agda2-mode))
@@ -327,6 +514,10 @@
 
 ;;; purescript
 (add-hook 'purescript-mode-hook 'purescript-indentation-mode)
+
+;;; eat
+;; doesn't work without integration??
+;;(setq eat-query-before-killing-running-terminal t)
 
 ;;; gptel
 (setq gptel-model 'gemini-3-flash-preview ;; 'gemini-3-pro-preview
