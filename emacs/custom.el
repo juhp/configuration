@@ -52,9 +52,16 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+; '(default ((t (:inherit nil :extend nil :stipple nil :background "black" :foreground "white" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "Google" :family "Noto Sans Mono"))))
  '(agda2-highlight-datatype-face ((t (:foreground "dodger blue"))))
  '(agda2-highlight-function-face ((t (:foreground "royalblue1"))))
  '(agda2-highlight-primitive-face ((t (:foreground "cornflower blue"))))
+ '(ansi-color-bright-blue ((t (:background "blue3" :foreground "skyblue1"))))
+ '(ansi-color-bright-magenta ((t (:background "magenta1" :foreground "magenta1"))))
+ '(ansi-color-bright-yellow ((t (:background "yellow2" :foreground "yellow2"))))
+ '(ansi-color-faint ((t (:weight light))))
+ '(ansi-color-magenta ((t (:background "magenta4" :foreground "magenta4"))))
+ '(ansi-color-yellow ((t (:background "gold3" :foreground "gold3"))))
  '(error ((t (:foreground "red3" :weight bold))))
  '(font-lock-comment-face ((t (:foreground "chocolate2"))))
  '(fringe ((t (:background "grey25"))))
@@ -62,5 +69,4 @@
  '(minibuffer-prompt ((t nil)))
  '(rpm-spec-tag-face ((t (:foreground "lightblue"))))
  '(term-color-blue ((t (:background "RoyalBlue" :foreground "RoyalBlue"))))
- '(term-color-yellow ((t (:background "gold" :foreground "gold"))))
  '(whitespace-indentation ((t (:background "grey12" :foreground "firebrick")))))
