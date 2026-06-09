@@ -57,6 +57,8 @@ set +h
 
 # User specific aliases and functions
 alias ls='ls --color=auto'
+alias nixgl='nix run github:nix-community/nixGL#nixGLIntel --'
+alias nixvk='nix run github:nix-community/nixGL#nixVulkanIntel --'
 
 vterm_printf(){
     if [ -n "$TMUX" ] && ([ "${TERM%%-*}" = "tmux" ] || [ "${TERM%%-*}" = "screen" ] ); then
@@ -109,19 +111,20 @@ bcp_layout() {
     bcp_append "\n"
 
     bcp_subshell
+    # ~/bin/Emacs now unsets SHLVL
     bcp_shlvl "bgmagenta"
 
     local host=""
     if [ -n "$container" ]; then
         # for toolbox
-        if [ -r /run/.containerenv ]; then
+        if [ "$ID" = "fedora" -a -r /run/.containerenv ]; then
             # This pulls the name= value from the file
-            host=$(grep -oP '(?<=name=")[^"]+' /run/.containerenv | sed "s/fedora-toolbox-/F/")
-            case "$host" in
-                F44-rebuilt)  host="f45" ;;
-                F45-hs)       host="f45-hs" ;;
-                F44-branched) host="f44" ;;
-                F43-haskell)  host="f43-hs" ;;
+            containername=$(grep -oP '(?<=name=")[^"]+' /run/.containerenv | sed "s/fedora-toolbox-//")
+            case "$containername" in
+                45-hs)       host="F45-hs" ;;
+                # 44-branched) host="F44" ;;
+                43-haskell)  host="F43-hs" ;;
+                *) host="F$VERSION_ID" ;;
             esac
         else
             case "$VARIANT_ID" in
